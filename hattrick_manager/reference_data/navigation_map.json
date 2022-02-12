@@ -1,0 +1,188 @@
+{
+    "dyNavGen": {
+        "My Hattrick": {
+            "My Office": []
+        },
+        "My Club": {
+			"Overview_Club": [],
+			"Manager": [],
+			"Stadium": [],
+			"Staff": [],
+			"Fans": [],
+			"Transfers": {
+				"Transfer search": [],
+				"Transfer history": []
+			},
+			"Finances_Club": [],
+			"Players_Senior": ["SeniorPlayerList"],
+			"Matches_Senior": [],
+			"Team Analysis": [],
+			"Series_Senior": [],
+			"Cup": [],
+			"Tournaments": [],
+			"Ladders": [],
+			"Training_Senior": [],
+			"Challenges_Senior": [],
+			"Overview_Youth": [],
+			"Players_Youth": ["YouthPlayerList"],
+			"Matches_Youth": [],
+			"Series_Youth": [],
+			"Training_Youth": [],
+			"Challenges_Youth": [],
+			"Finances_Youth": []      
+        }
+    },
+    "dyNavPla": {
+        "PlayerName": {
+            "Fire": [],
+            "Sell": [],
+            "Rename": [],
+            "Give nickname": [],
+            "Shirt number": [],
+            "His statement": [],
+            "Transfer history": [],
+            "Transfer Compare": [],
+            "Memorable moments": [],
+            "Best performance": [],
+            "Performance history": [],
+            "Injury history": [],
+            "Salary history": []
+        }
+    },
+	"dyNavRef": {
+		"My Hattrick": {
+			"href": "/MyHattrick/Dashboard.aspx",
+			"id": "myHattrickLink"
+		},
+		"My Club": {
+			"href": "/Club/",
+			"id": "myClubLink"
+		},
+		"Overview_Club": {
+			"href": "/Club/?TeamID=9036"
+		},
+		"Manager": {
+			"href": "/Club/Manager/?teamId=9036"
+		},
+		"Stadium": {
+			"href": "/Club/Arena/?ArenaID=9036"
+		},
+		"Staff": {
+			"href": "/Club/Specialists/?teamId=9036"
+		},
+		"Fans": {
+			"href": "/Club/Fans/?teamId=9036"
+		},
+		"Transfers": {
+			"href": "/Club/Transfers/?TeamID=9036"
+		},
+		"Transfer search": {
+			"href": "/World/Transfers/"
+		},
+		"Transfer history": {
+			"href": "/Club/Transfers/transfersTeam.aspx?teamId=9036"
+		},
+		"Finances_Club": {
+			"href": "/Club/Finances/?teamId=9036"
+		},
+		"Players_Senior": {
+			"href": "/Club/Players/?TeamID=9036",
+			"id": "playersLink"
+		},
+		"Matches_Senior": {
+			"href": "/Club/Matches/?TeamID=9036",
+			"id": "matchesLink"
+		},
+		"Team Analysis": {
+			"href": "/Club/TacticsRoom/"
+		},
+		"Series_Senior": {
+			"href": "/World/Series/?LeagueLevelUnitID=36916&amp;TeamID=9036"
+		},
+		"Cup": {
+			"href": "/Club/Cup/?teamId=9036"
+		},
+		"Tournaments": {
+			"href": "/Community/Tournaments/?teamId=9036"
+		},
+		"Ladders": {
+			"href": "/Club/Ladders/?teamId=9036"
+		},
+		"Training_Senior": {
+			"href": "/Club/Training/Training.aspx?teamId=9036"
+		},
+		"Challenges_Senior": {
+			"href": "/Club/Challenges/"
+		},
+		"Overview_Youth": {
+			"href": "/Club/Youth/?YouthTeamID=2836017"
+		},
+		"Players_Youth": {
+			"href": "/Club/Players/YouthPlayers.aspx?YouthTeamID=2836017"
+		},
+		"Matches_Youth": {
+			"href": "/Club/Matches/?TeamID=9036&amp;YouthTeamId=2836017"
+		},
+		"Series_Youth": {
+			"href": "/World/Series/YouthSeries.aspx?YouthLeagueId=676448&amp;TeamId=9036"
+		},
+		"Training_Youth": {
+			"href": "/Club/Training/YouthTraining.aspx?YouthTeamID=2836017"
+		},
+		"Challenges_Youth": { 
+			"href": "/Club/Challenges/YouthChallenges.aspx?SeniorTeamID=9036",
+			"id": "A2"
+		},
+		"Finances_Youth": {
+			"href": "/Club/Youth/Finances.aspx?TeamID=9036&amp;YouthTeamId=2836017"
+		},
+		"PlayerName": {
+			"title": "PlayerName"
+		},
+		"Fire": {
+			"href": "ctl00_ctl00_CPContent_CPSidebar_ucOwnerActions_lnkSack",
+			"title": "Fire"
+		},
+		"Sell": {
+			"id": "ctl00_ctl00_CPContent_CPSidebar_ucOwnerActions_lnkSell",
+			"title": "Sell"
+		},
+		"Rename": {
+			"id": "ctl00_ctl00_CPContent_CPSidebar_ucOwnerActions_lnkRename",
+			"title": "Rename"
+		},
+		"Give nickname": {
+			"id": "ctl00_ctl00_CPContent_CPSidebar_ucOwnerActions_lnkNickname",
+			"title": "Give nickname"
+		},
+		"Shirt number": {
+			"id": "ctl00_ctl00_CPContent_CPSidebar_ucSupporterFeatures_lnkPlayerNumber",
+			"title": "Shirt number"
+		},
+		"His statement": {
+			"id": "ctl00_ctl00_CPContent_CPSidebar_ucSupporterFeatures_lnkEditStatement",
+			"title": "His statement"
+		},
+		"Transfer history": {
+			"href": "#transferHistory"
+		},
+		"Transfer Compare": {
+			"href": "/Club/"
+		},
+		"Memorable moments": {
+			"href": "/Club/"
+		},
+		"Best performance": {
+			"href": "/Club/"
+		},
+		"Performance history": {
+			"href": "/Club/"
+		},
+		"Injury history": {
+			"href": "/Club/"
+		},
+		"Salary history": {
+			"href": "/Club/"
+		}
+	}
+}

@@ -1,0 +1,6 @@
+{
+	"names": {
+        "username": "ctl00$CPContent$ucLogin$txtUserName",
+		"password": "ctl00$CPContent$ucLogin$txtPassword",
+    },
+}

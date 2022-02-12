@@ -1,0 +1,6 @@
+{
+	"driver_type": {
+        "chrome": "C:\Program Files (x86)\chromedriver.exe",	
+    },
+	"options": "headless", 
+}
