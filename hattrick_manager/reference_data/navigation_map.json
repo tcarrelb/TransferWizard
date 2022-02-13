@@ -1,5 +1,5 @@
 {
-    "dyNavGen": {
+    "general_nav": {
         "My Hattrick": {
             "My Office": []
         },
@@ -32,8 +32,8 @@
 			"Finances_Youth": []      
         }
     },
-    "dyNavPla": {
-        "PlayerName": {
+    "player_nav": {
+        "Player Name": {
             "Fire": [],
             "Sell": [],
             "Rename": [],
@@ -49,7 +49,7 @@
             "Salary history": []
         }
     },
-	"dyNavRef": {
+	"ref_nav": {
 		"My Hattrick": {
 			"href": "/MyHattrick/Dashboard.aspx",
 			"id": "myHattrickLink"

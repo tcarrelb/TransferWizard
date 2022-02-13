@@ -1,6 +1,11 @@
 {
-	"names": {
+    "name": {
         "username": "ctl00$CPContent$ucLogin$txtUserName",
-		"password": "ctl00$CPContent$ucLogin$txtPassword",
+        "password": "ctl00$CPContent$ucLogin$txtPassword"
     },
+    "id": {
+        "club_link": "myClubLink",
+        "team_link": "playersLink",
+        "team_page": "ctl00_ctl00_CPContent_divStartMain"
+    }
 }

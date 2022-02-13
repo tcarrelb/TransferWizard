@@ -1,4 +1,4 @@
-from reference_data import global_vars as glova
+import hattrick_manager.reference_data.global_vars as glova
 
 import socket
 import time
@@ -30,7 +30,7 @@ def check_connection():
     return
 
 
-def wait(element_type: str, element_name: str, timeout: float, driver: object):
+def wait(element_type: str, element_name: str, timeout: float, driver: webdriver):
     """
     Functions that waits for an HTML element to be located.
 
@@ -42,7 +42,7 @@ def wait(element_type: str, element_name: str, timeout: float, driver: object):
         Name of the element looked for.
     timeout: float
         Timeout limit for the search of the element.
-    driver: object
+    driver: webdriver
         The web driver object.
 
     Returns
@@ -64,7 +64,7 @@ def wait(element_type: str, element_name: str, timeout: float, driver: object):
     return
 
 
-def goto_id(id_link: str, driver: object):
+def goto_id(id_link: str, driver: webdriver):
     """
     Click a lind identified by its HTML ID.
 
@@ -72,7 +72,7 @@ def goto_id(id_link: str, driver: object):
     ----------
     id_link: str
         Name of the HTML ID link.
-    driver: object
+    driver: webdriver
         The web driver object.
 
     Returns
@@ -91,13 +91,13 @@ def goto_id(id_link: str, driver: object):
     return
 
 
-def launch_web_browser():
+def launch_web_browser() -> webdriver:
     """
     Launching the web browser.
 
     Returns
     -------
-    driver: object
+    driver: webdriver
         Returns the driver object that will then be passed on other to
         other functions.
     """
@@ -105,8 +105,8 @@ def launch_web_browser():
     sleep_duration = 2
     options = webdriver.ChromeOptions()
 
-    options.add_argument(glova.driver_info['options'])
-    driver = webdriver.Chrome(glova.driver_info['driver_type']['chrome'], options=options)
+    options.add_argument('headless')
+    driver = webdriver.Chrome('C:\Program Files (x86)\chromedriver.exe', options=options)
     driver.get(glova.login_info['url'])
     driver.set_page_load_timeout(timeout)
 
@@ -120,13 +120,13 @@ def launch_web_browser():
     return driver
 
 
-def goto_team_webpage(driver: object):
+def goto_team_webpage(driver: webdriver):
     """
     Checking the internet connection.
 
     Parameters
     ----------
-    driver: object
+    driver: webdriver
         The web driver object.
     """
     timeout = 2

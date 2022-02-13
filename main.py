@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
-import hattrick_manager.navigators as nav
+import hattrick_manager.readers as read
 
-nav.check_connection()
+df = read.collect_team_data()

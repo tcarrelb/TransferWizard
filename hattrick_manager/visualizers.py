@@ -1,4 +1,4 @@
-from reference_data import global_vars as glova
+import hattrick_manager.reference_data.global_vars as glova
 
 
 def display_top_scorers():
