@@ -132,9 +132,9 @@ def collect_player_extra_data(p_type: str, p_coach: str, __driver) -> dict:
 
         # Retrieve personality data:
         player_extra_data['player_id'] = int(player_id[0].text.strip('(').strip(')'))
-        player_extra_data['friendly'] = skill_elem[index].text
-        player_extra_data['aggressive'] = skill_elem[index + 1].text
-        player_extra_data['honest'] = skill_elem[index + 2].text
+        player_extra_data['friendliness'] = skill_elem[index].text
+        player_extra_data['aggressiveness'] = skill_elem[index + 1].text
+        player_extra_data['honesty'] = skill_elem[index + 2].text
 
         # Retrieve goal table data:
         tables = soup.find_all('table')  # locate all the tables in the page

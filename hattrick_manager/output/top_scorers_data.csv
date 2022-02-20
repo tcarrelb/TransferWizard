@@ -1,0 +1,46 @@
+nationality,player_name,player_id,specialty,mother_club,weeks_in_club,leadership,friendliness,aggressiveness,honesty,goals_for_team,goals_per_week
+Italy,Alessandro Cammarata,450767580,Quick,No,50,4,popular guy,balanced,righteous,41,0.82
+Denmark,Kai Bæk,458220930,Technical,No,51,4,pleasant guy,temperamental,dishonest,33,0.64706
+France,Lucas Combes,459317526,Head,Yes,48,2,pleasant guy,temperamental,honest,33,0.6875
+France,Roland Adam,450311428,,Yes,52,3,controversial person,balanced,upright,28,0.53846
+France,Stéphane Auberger,458658332,Quick,No,47,4,pleasant guy,tranquil,honest,24,0.51064
+Poland,Adrian Staszek,450780334,Powerful,No,53,7,popular guy,temperamental,honest,21,0.39623
+Poland,Lech Dziopak,426974230,Unpredictable,No,42,2,sympathetic guy,calm,honest,17,0.40476
+Sweden,Nassim Khoshaba,421929076,Technical,No,67,3,popular guy,calm,upright,14,0.20896
+Italy,Serse Altobello,450780915,Support,No,45,3,sympathetic guy,temperamental,upright,14,0.31111
+Spain,Carlos Paulín,414319138,Powerful,No,58,2,controversial person,fiery,dishonest,13,0.22414
+Italy,Marcello Amoroso,424877885,Quick,No,34,3,popular guy,temperamental,honest,11,0.32353
+Portugal,Marinho Teixeira,432010328,Unpredictable,No,34,4,popular guy,temperamental,honest,11,0.32353
+Israel,Julian Koopman,421958983,,No,27,3,sympathetic guy,tranquil,honest,11,0.40741
+France,Luc Toulet,450311427,,Yes,99,5,pleasant guy,tranquil,upright,10,0.10101
+France,Franck Tharreau,450311426,,Yes,67,5,popular guy,fiery,honest,10,0.14925
+Italy,Riccardo Puccianti,450311416,Powerful,No,49,2,sympathetic guy,balanced,honest,10,0.20408
+England,Ewan Evans,420296673,,No,45,5,pleasant guy,temperamental,upright,10,0.22222
+France,Guillaume Fournier,450311422,,Yes,99,2,controversial person,tranquil,upright,9,0.09091
+France,Jérôme Levillain,450311418,,Yes,67,1,nasty fellow,tranquil,dishonest,9,0.13433
+Germany,Peter Rother,425757339,,No,58,3,popular guy,temperamental,honest,9,0.15517
+Jamaica,Raymond Modesto,458382339,Powerful,No,47,5,pleasant guy,tranquil,honest,9,0.19149
+Germany,Moritz Schirnding,418701163,Technical,No,54,5,pleasant guy,balanced,honest,8,0.14815
+Uruguay,José Bagnulo,458573459,Powerful,No,52,3,controversial person,balanced,honest,8,0.15385
+Argentina,Juan Carlos Irureta,458488210,Quick,No,48,4,pleasant guy,balanced,honest,7,0.14583
+France,Maxime Hot,450311424,Unpredictable,Yes,77,3,pleasant guy,calm,honest,6,0.07792
+Uzbekistan,Hambartsoum Gomidasyan,429783846,,No,58,4,controversial person,fiery,honest,6,0.10345
+Netherlands,Gauke Pieter van Roden,448723126,Technical,No,48,4,pleasant guy,calm,honest,6,0.125
+Italy,Giorgio Crivellari,417011644,Quick,No,56,2,pleasant guy,tranquil,dishonest,5,0.08929
+Sweden,Peter Wästerér,416542537,,No,43,2,popular guy,fiery,upright,5,0.11628
+Italy,Michele Lorenzale,419316484,,No,43,5,sympathetic guy,calm,dishonest,5,0.11628
+Bulgaria,Hristo Popov,444161537,Technical,No,33,6,popular guy,fiery,honest,4,0.12121
+Bosnia & Herzegovina,Tahir Ćurevac,422466962,,No,19,4,pleasant guy,temperamental,honest,4,0.21053
+France,Martial Koko,450311421,,Yes,99,1,controversial person,calm,honest,3,0.0303
+Portugal,Nuno Simão Lourenço,420592763,,No,19,3,sympathetic guy,balanced,honest,3,0.15789
+Greece,Panos Ntolias,438759276,Unpredictable,No,80,1,sympathetic guy,tranquil,righteous,2,0.025
+France,Martin Cusset,450311423,Quick,Yes,72,4,popular guy,fiery,upright,2,0.02778
+Germany,August Teschl,431292806,,No,19,5,pleasant guy,temperamental,upright,2,0.10526
+France,Andy Larrère,450311413,Head,Yes,99,3,nasty fellow,fiery,infamous,0,0.0
+France,Emmanuel Sartelet,450311414,Powerful,Yes,99,4,popular guy,calm,infamous,0,0.0
+France,Thomas Richard,457077707,,Yes,60,4,pleasant guy,calm,dishonest,0,0.0
+Argentina,Orestes Omar Rocha,388888136,,No,52,4,pleasant guy,calm,upright,0,0.0
+Israel,Gdaliahu Sinai,422169086,,No,36,3,controversial person,fiery,upright,0,0.0
+Iran,Vrouir Manucharyan,407268057,,No,13,6,controversial person,tranquil,honest,0,0.0
+France,Daniel Ricardo Bidarra,433642538,,No,2,4,pleasant guy,calm,upright,0,0.0
+Poland,Jan Wasilewski,433364581,Unpredictable,No,1,4,controversial person,temperamental,honest,0,0.0
