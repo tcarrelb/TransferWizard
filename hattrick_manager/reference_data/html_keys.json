@@ -3,6 +3,10 @@
         "username": "ctl00$CPContent$ucLogin$txtUserName",
         "password": "ctl00$CPContent$ucLogin$txtPassword"
     },
+    "url": {
+        "club_player": "/Club/Players/Player.aspx?playerId=",
+		"player": "/Players/player.aspx?PlayerId="
+    },	
     "id": {
         "club_link": "myClubLink",
         "team_link": "playersLink",
