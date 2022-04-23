@@ -1,46 +1,52 @@
 nationality,player_name,player_id,specialty,mother_club,weeks_in_club,leadership,friendliness,aggressiveness,honesty,goals_for_team,goals_per_week
 Italy,Alessandro Cammarata,450767580,Quick,No,50,4,popular guy,balanced,righteous,41,0.82
-Denmark,Kai Bæk,458220930,Technical,No,51,4,pleasant guy,temperamental,dishonest,33,0.64706
-France,Lucas Combes,459317526,Head,Yes,48,2,pleasant guy,temperamental,honest,33,0.6875
+Denmark,Kai Bæk,458220930,Technical,No,57,4,pleasant guy,temperamental,dishonest,36,0.63158
+France,Lucas Combes,459317526,Head,Yes,49,2,pleasant guy,temperamental,honest,35,0.71429
 France,Roland Adam,450311428,,Yes,52,3,controversial person,balanced,upright,28,0.53846
-France,Stéphane Auberger,458658332,Quick,No,47,4,pleasant guy,tranquil,honest,24,0.51064
+France,Stéphane Auberger,458658332,Quick,No,49,4,pleasant guy,tranquil,honest,24,0.4898
 Poland,Adrian Staszek,450780334,Powerful,No,53,7,popular guy,temperamental,honest,21,0.39623
-Poland,Lech Dziopak,426974230,Unpredictable,No,42,2,sympathetic guy,calm,honest,17,0.40476
-Sweden,Nassim Khoshaba,421929076,Technical,No,67,3,popular guy,calm,upright,14,0.20896
+Poland,Lech Dziopak,426974230,Unpredictable,No,51,2,sympathetic guy,calm,honest,20,0.39216
+Sweden,Nassim Khoshaba,421929076,Technical,No,76,3,popular guy,calm,upright,14,0.18421
 Italy,Serse Altobello,450780915,Support,No,45,3,sympathetic guy,temperamental,upright,14,0.31111
-Spain,Carlos Paulín,414319138,Powerful,No,58,2,controversial person,fiery,dishonest,13,0.22414
-Italy,Marcello Amoroso,424877885,Quick,No,34,3,popular guy,temperamental,honest,11,0.32353
-Portugal,Marinho Teixeira,432010328,Unpredictable,No,34,4,popular guy,temperamental,honest,11,0.32353
-Israel,Julian Koopman,421958983,,No,27,3,sympathetic guy,tranquil,honest,11,0.40741
-France,Luc Toulet,450311427,,Yes,99,5,pleasant guy,tranquil,upright,10,0.10101
+Spain,Carlos Paulín,414319138,Powerful,No,67,2,controversial person,fiery,dishonest,13,0.19403
+Portugal,Marinho Teixeira,432010328,Unpredictable,No,43,4,popular guy,temperamental,honest,13,0.30233
+Italy,Marcello Amoroso,424877885,Quick,No,43,3,popular guy,temperamental,honest,12,0.27907
+Israel,Julian Koopman,421958983,,No,36,3,sympathetic guy,tranquil,honest,11,0.30556
+France,Luc Toulet,450311427,,Yes,108,5,pleasant guy,tranquil,upright,10,0.09259
 France,Franck Tharreau,450311426,,Yes,67,5,popular guy,fiery,honest,10,0.14925
 Italy,Riccardo Puccianti,450311416,Powerful,No,49,2,sympathetic guy,balanced,honest,10,0.20408
 England,Ewan Evans,420296673,,No,45,5,pleasant guy,temperamental,upright,10,0.22222
-France,Guillaume Fournier,450311422,,Yes,99,2,controversial person,tranquil,upright,9,0.09091
+France,Guillaume Fournier,450311422,,Yes,108,2,controversial person,tranquil,upright,9,0.08333
+Germany,Peter Rother,425757339,,No,67,3,popular guy,temperamental,honest,9,0.13433
 France,Jérôme Levillain,450311418,,Yes,67,1,nasty fellow,tranquil,dishonest,9,0.13433
-Germany,Peter Rother,425757339,,No,58,3,popular guy,temperamental,honest,9,0.15517
-Jamaica,Raymond Modesto,458382339,Powerful,No,47,5,pleasant guy,tranquil,honest,9,0.19149
+Uruguay,José Bagnulo,458573459,Powerful,No,60,3,controversial person,balanced,honest,9,0.15
+Jamaica,Raymond Modesto,458382339,Powerful,No,49,5,pleasant guy,tranquil,honest,9,0.18367
 Germany,Moritz Schirnding,418701163,Technical,No,54,5,pleasant guy,balanced,honest,8,0.14815
-Uruguay,José Bagnulo,458573459,Powerful,No,52,3,controversial person,balanced,honest,8,0.15385
 Argentina,Juan Carlos Irureta,458488210,Quick,No,48,4,pleasant guy,balanced,honest,7,0.14583
 France,Maxime Hot,450311424,Unpredictable,Yes,77,3,pleasant guy,calm,honest,6,0.07792
-Uzbekistan,Hambartsoum Gomidasyan,429783846,,No,58,4,controversial person,fiery,honest,6,0.10345
+Uzbekistan,Hambartsoum Gomidasyan,429783846,,No,67,4,controversial person,fiery,honest,6,0.08955
 Netherlands,Gauke Pieter van Roden,448723126,Technical,No,48,4,pleasant guy,calm,honest,6,0.125
+Bosnia & Herzegovina,Tahir Ćurevac,422466962,,No,28,4,pleasant guy,temperamental,honest,6,0.21429
 Italy,Giorgio Crivellari,417011644,Quick,No,56,2,pleasant guy,tranquil,dishonest,5,0.08929
-Sweden,Peter Wästerér,416542537,,No,43,2,popular guy,fiery,upright,5,0.11628
-Italy,Michele Lorenzale,419316484,,No,43,5,sympathetic guy,calm,dishonest,5,0.11628
-Bulgaria,Hristo Popov,444161537,Technical,No,33,6,popular guy,fiery,honest,4,0.12121
-Bosnia & Herzegovina,Tahir Ćurevac,422466962,,No,19,4,pleasant guy,temperamental,honest,4,0.21053
-France,Martial Koko,450311421,,Yes,99,1,controversial person,calm,honest,3,0.0303
-Portugal,Nuno Simão Lourenço,420592763,,No,19,3,sympathetic guy,balanced,honest,3,0.15789
-Greece,Panos Ntolias,438759276,Unpredictable,No,80,1,sympathetic guy,tranquil,righteous,2,0.025
+Italy,Michele Lorenzale,419316484,,No,52,5,sympathetic guy,calm,dishonest,5,0.09615
+Sweden,Peter Wästerér,416542537,,No,51,2,popular guy,fiery,upright,5,0.09804
+Bulgaria,Hristo Popov,444161537,Technical,No,42,6,popular guy,fiery,honest,5,0.11905
+Portugal,Nuno Simão Lourenço,420592763,,No,27,3,sympathetic guy,balanced,honest,5,0.18519
+France,Martial Koko,450311421,,Yes,108,1,controversial person,calm,honest,3,0.02778
+Germany,August Teschl,431292806,,No,28,5,pleasant guy,temperamental,upright,3,0.10714
+Greece,Panos Ntolias,438759276,Unpredictable,No,89,1,sympathetic guy,tranquil,righteous,2,0.02247
 France,Martin Cusset,450311423,Quick,Yes,72,4,popular guy,fiery,upright,2,0.02778
-Germany,August Teschl,431292806,,No,19,5,pleasant guy,temperamental,upright,2,0.10526
-France,Andy Larrère,450311413,Head,Yes,99,3,nasty fellow,fiery,infamous,0,0.0
-France,Emmanuel Sartelet,450311414,Powerful,Yes,99,4,popular guy,calm,infamous,0,0.0
-France,Thomas Richard,457077707,,Yes,60,4,pleasant guy,calm,dishonest,0,0.0
-Argentina,Orestes Omar Rocha,388888136,,No,52,4,pleasant guy,calm,upright,0,0.0
+Poland,Jan Wasilewski,433364581,Unpredictable,No,10,4,controversial person,temperamental,honest,2,0.2
+Faroe Islands,Petur Hans í Sjeagarði,465951339,Technical,No,8,4,sympathetic guy,balanced,honest,2,0.25
+Kenya,Stephen Tikolo,466065555,Unpredictable,No,6,3,sympathetic guy,balanced,upright,2,0.33333
+Spain,Hiru Dorrazubi,466123988,Resilient,No,6,6,pleasant guy,balanced,upright,1,0.16667
+France,Andy Larrère,450311413,Head,Yes,108,3,nasty fellow,fiery,infamous,0,0.0
+France,Emmanuel Sartelet,450311414,Powerful,Yes,108,4,popular guy,calm,infamous,0,0.0
+France,Thomas Richard,457077707,,Yes,69,4,pleasant guy,calm,dishonest,0,0.0
+Argentina,Orestes Omar Rocha,388888136,,No,60,4,pleasant guy,calm,upright,0,0.0
 Israel,Gdaliahu Sinai,422169086,,No,36,3,controversial person,fiery,upright,0,0.0
-Iran,Vrouir Manucharyan,407268057,,No,13,6,controversial person,tranquil,honest,0,0.0
-France,Daniel Ricardo Bidarra,433642538,,No,2,4,pleasant guy,calm,upright,0,0.0
-Poland,Jan Wasilewski,433364581,Unpredictable,No,1,4,controversial person,temperamental,honest,0,0.0
+Iran,Vrouir Manucharyan,407268057,,No,21,6,controversial person,tranquil,honest,0,0.0
+France,Daniel Ricardo Bidarra,433642538,,No,11,4,pleasant guy,calm,upright,0,0.0
+Poland,Marcin Gajęcki,466031973,Technical,No,7,6,pleasant guy,tranquil,dishonest,0,0.0
+Switzerland,Davide Ettlin,468318834,Quick,No,2,2,pleasant guy,temperamental,upright,0,0.0
+Sweden,Kenth Pilholt,468829803,Unpredictable,No,0,4,pleasant guy,calm,upright,0,

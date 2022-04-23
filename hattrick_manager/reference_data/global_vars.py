@@ -19,3 +19,39 @@ with open(os.path.join(ref_dir, 'html_keys.json')) as f:
 # Extracting team table info:
 with open(os.path.join(ref_dir, 'team_table.json')) as f:
     team_table_ref = json.load(f)
+
+# Transfer dictionary for transfer search:
+transfer_dict_init = {
+    "Age": {
+        "Years": {
+            "Min": 17,
+            "Max": 17,
+        },
+        "Days": {
+            "Min": 0,
+            "Max": 1,
+        },
+    },
+    "Skills": {
+        "Skill_1": {
+            "Name": "Winger",
+            "Min":  6,
+            "Max":  8,
+        },
+        "Skill_2": {
+            "Name": None,
+            "Min":  17,
+            "Max":  17,
+        },
+        "Skill_3": {
+            "Name": None,
+            "Min": 17,
+            "Max": 17,
+        },
+        "Skill_4": {
+            "Name": None,
+            "Min": 17,
+            "Max": 17,
+        },
+    },
+}

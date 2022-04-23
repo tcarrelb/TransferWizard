@@ -10,6 +10,14 @@
     "id": {
         "club_link": "myClubLink",
         "team_link": "playersLink",
-        "team_page": "ctl00_ctl00_CPContent_divStartMain"
+        "team_page": "ctl00_ctl00_CPContent_divStartMain",
+        "years_min_menu": "ctl00_ctl00_CPContent_CPMain_ddlAgeMin",
+        "years_max_menu": "ctl00_ctl00_CPContent_CPMain_ddlAgeMax",
+        "days_min_menu": "ctl00_ctl00_CPContent_CPMain_ddlAgeDaysMin",
+        "days_max_menu": "ctl00_ctl00_CPContent_CPMain_ddlAgeDaysMax",
+        "skill_root": "ctl00_ctl00_CPContent_CPMain_ddlSkill",
+        "search_icon": "ctl00_ctl00_CPContent_CPMain_butSearch",
+        "no_transfer_id": "ctl00_ctl00_CPContent_CPMain_lblNoTransfers",
+        "main_wrapper": "ctl00_ctl00_CPContent_mainWrapper"
     }
 }

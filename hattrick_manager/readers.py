@@ -1,6 +1,7 @@
 import hattrick_manager as hatman
 import hattrick_manager.reference_data.global_vars as glova
 import hattrick_manager.navigators as nav
+import hattrick_manager.checkers as che
 
 import os
 import sys
@@ -14,6 +15,20 @@ from selenium.webdriver.support import expected_conditions as ec
 
 
 def collect_main_team_data(_driver) -> pd.DataFrame:
+    """
+    Click a lind identified by its HTML ID.
+
+    Parameters
+    ----------
+    id_link: str
+        Name of the HTML ID link.
+    driver: webdriver
+        The web driver object.
+
+    Returns
+    -------
+    Returns TimeoutException if element ID not found on time.
+    """
     timeout = 10
     tt_ref = glova.team_table_ref
     WebDriverWait(_driver, timeout).until(ec.presence_of_element_located((By.ID, glova.htmlk['id']['team_page'])))
@@ -119,6 +134,20 @@ def collect_main_team_data(_driver) -> pd.DataFrame:
 
 
 def collect_player_extra_data(p_type: str, p_coach: str, __driver) -> dict:
+    """
+    Click a lind identified by its HTML ID.
+
+    Parameters
+    ----------
+    id_link: str
+        Name of the HTML ID link.
+    driver: webdriver
+        The web driver object.
+
+    Returns
+    -------
+    Returns TimeoutException if element ID not found on time.
+    """
     timeout = 5
     WebDriverWait(__driver, timeout).until(ec.presence_of_element_located((By.ID, 'content')))
     html_page = __driver.page_source
@@ -164,6 +193,20 @@ def collect_player_extra_data(p_type: str, p_coach: str, __driver) -> dict:
 
 
 def collect_extra_team_data(df_main_team_data: pd.DataFrame, _driver, partial_path: str) -> pd.DataFrame:
+    """
+    Click a lind identified by its HTML ID.
+
+    Parameters
+    ----------
+    id_link: str
+        Name of the HTML ID link.
+    driver: webdriver
+        The web driver object.
+
+    Returns
+    -------
+    Returns TimeoutException if element ID not found on time.
+    """
     df = deepcopy(df_main_team_data)
     extra_data = []
     break_it = False
@@ -256,7 +299,7 @@ def collect_team_data() -> pd.DataFrame:
     team_csv_path = os.path.join(out_dir, team_data_csv)
     df_team_main_data = pd.DataFrame()
     try:
-        nav.check_connection()
+        che.check_connection()
         print('Connected to Wifi.')
         driver = nav.launch_web_browser()
         nav.goto_team_webpage(driver)
@@ -279,7 +322,7 @@ def collect_team_data() -> pd.DataFrame:
     while not df_partial_etd_new.shape[0] == df_team_main_data.shape[0]:
         try:
             if i > 0:
-                nav.check_connection()
+                che.check_connection()
                 df_partial_etd_new = collect_extra_team_data(df_team_main_data, driver, partial_csv_path)
                 df_partial_etd_new.to_csv(partial_csv_path, index=False)
             i += 1
@@ -298,3 +341,76 @@ def collect_team_data() -> pd.DataFrame:
     df_team_data.to_csv(team_csv_path, index=False)
 
     return df_team_data
+
+
+def get_search_pattern(skill, transfer_tracker=False):
+    """
+    Click a lind identified by its HTML ID.
+
+    Parameters
+    ----------
+    id_link: str
+        Name of the HTML ID link.
+    driver: webdriver
+        The web driver object.
+
+    Returns
+    -------
+    Returns TimeoutException if element ID not found on time.
+    """
+    ref_dir = os.path.join(hatman.__path__[0], 'reference_data', 'transfer_search_patterns')
+    search_patterns_xlsx = os.path.join(ref_dir, 'search_pattern.xlsx')
+    if not transfer_tracker:
+        csv_name = skill + '_search_cases.csv'
+    else:
+        csv_name = skill + '_transfer_tracker.csv'
+    search_pattern_skill_csv = os.path.join(ref_dir, csv_name)
+
+    df = pd.read_excel(search_patterns_xlsx, sheet_name=skill)
+    df_skill_pat = pd.DataFrame()
+    n_sections = 3  # number of skill ranges searched per age range
+    n_transfer_pages = 4  # max number of transfer pages in Hattrick
+
+    df[['Min', 'Max']] = df.age_range.str.split('-', expand=True)
+    df_skill_pat[['min_year', 'min_days']] = df.Min.str.split('.', expand=True)
+    df_skill_pat[['max_year', 'max_days']] = df.Max.str.split('.', expand=True)
+    df_skill_pat[['section_1_min', 'section_1_max']] = df.section_1.str.split('&', expand=True)
+    df_skill_pat[['section_2_min', 'section_2_max']] = df.section_2.str.split('&', expand=True)
+    df_skill_pat[['section_3_min', 'section_3_max']] = df.section_3.str.split('&', expand=True)
+
+    df_skill_pat['min_year'] = df_skill_pat['min_year'].astype(str).astype(int)
+    df_skill_pat['max_year'] = df_skill_pat['max_year'].astype(str).astype(int)
+    df_skill_pat['min_days'] = df_skill_pat['min_days'].astype(str).astype(int)
+    df_skill_pat['max_days'] = df_skill_pat['max_days'].astype(str).astype(int)
+    for i in range(n_sections):
+        section_min = f'section_{i+1}_min'
+        section_max = f'section_{i+1}_max'
+        df_skill_pat[section_min] = df_skill_pat[section_min].astype(str).astype(int)
+        df_skill_pat[section_max] = df_skill_pat[section_max].astype(str).astype(int)
+
+    df_skill_search_cases = []
+    i = 0
+    for i_row, row in df_skill_pat.iterrows():
+        for i_section in range(n_sections):
+            df_skill_search_case = {}
+            section_min = f'section_{i_section+1}_min'
+            section_max = f'section_{i_section+1}_max'
+            df_skill_search_case['min_year'] = row['min_year']
+            df_skill_search_case['max_year'] = row['max_year']
+            df_skill_search_case['min_days'] = row['min_days']
+            df_skill_search_case['max_days'] = row['max_days']
+            df_skill_search_case['section_min'] = row[section_min]
+            df_skill_search_case['section_max'] = row[section_max]
+            df_skill_search_case['researched'] = False
+            if transfer_tracker:
+                for j in range(n_transfer_pages):
+                    df_skill_search_case[f'searched_p{j+1}'] = False
+            df_skill_search_case['n_results'] = 0
+            df_skill_search_cases.append(df_skill_search_case)
+            i += 1
+
+    df_skill_search_cases = pd.DataFrame(df_skill_search_cases)
+    df_skill_search_cases = df_skill_search_cases[df_skill_search_cases['section_min'] != 0].reset_index(drop=True)
+    df_skill_search_cases.to_csv(search_pattern_skill_csv, index=False)
+
+    return df_skill_search_cases
