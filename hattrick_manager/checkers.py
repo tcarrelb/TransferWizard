@@ -7,7 +7,7 @@ class NoInternetException(Exception):
     pass
 
 
-def check_connection():
+def check_wifi_connection():
     """
     Checking the internet connection.
 
@@ -29,3 +29,12 @@ def check_exists_by_id(elem_id, driver):
         return False
 
     return True
+
+
+def check_search_status(df_transfer_tracker, i_row, n_pages):
+    search_complete = True
+    for i in range(n_pages):
+        if not df_transfer_tracker.at[i_row, "searched_p" + str(i + 1)]:
+            search_complete = False
+
+    return search_complete

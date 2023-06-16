@@ -4,7 +4,11 @@ import hattrick_manager.navigators as nav
 import hattrick_manager.checkers as che
 
 import os
+import re
 import sys
+import time
+import copy
+import datetime
 import pandas as pd
 from copy import deepcopy
 from bs4 import BeautifulSoup
@@ -12,6 +16,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as ec
+
+
+def clean_name(param_name):
+    p1 = param_name.split(" ")
+    p2 = [x.capitalize() for x in p1]
+    clean_p = ""
+    for p in p2:
+        clean_p = clean_p + p + "_"
+    final_p = clean_p[:-1]
+    return final_p
 
 
 def collect_main_team_data(_driver) -> pd.DataFrame:
@@ -305,12 +319,13 @@ def collect_team_data() -> pd.DataFrame:
         nav.goto_team_webpage(driver)
         print('Chrome Driver launched.')
         df_team_main_data = collect_main_team_data(driver)
+        print('Main team data collected.\n')
     except TimeoutException:
         driver.quit()
     except nav.NoInternetException:
         sys.exit(0, 'Reconnect to Wifi before launching script again.')
     finally:
-        print('Main team data collected.\n')
+        print('Main love data collected.\n')
 
     # Start collecting extra team data:
     print('Collecting team complementary data...')
@@ -341,6 +356,126 @@ def collect_team_data() -> pd.DataFrame:
     df_team_data.to_csv(team_csv_path, index=False)
 
     return df_team_data
+
+
+def collect_1p_transfer_search_data(driver) -> dict:
+    no_transfer_id = 'ctl00_ctl00_CPContent_CPMain_lblNoTransfers'
+    timeout = 3
+    WebDriverWait(driver, timeout).until(ec.presence_of_element_located((By.ID, "ctl00_ctl00_CPContent_divStartMain")))
+    # print("Page loaded\n")
+    time.sleep(0.5)
+    no_transfer_found = che.check_exists_by_id(no_transfer_id, driver)
+
+    if no_transfer_found:
+        df_transfers = pd.DataFrame()
+    else:
+        htmlDoc = driver.page_source
+        soup = BeautifulSoup(htmlDoc, "html.parser")  # the page is parsed
+        playerTable = soup.find("table", attrs={"class": "tablesorter indent"})
+        playerTableHeadings = playerTable.thead.find_all("tr")  # contains 2 rows
+        playerTableData = playerTable.tbody.find_all("tr")  # contains 2 rows
+
+        # Get all the headings of Lists
+        headings = []
+        data = []
+        for th in playerTableHeadings[0].find_all("th"):
+            heading = str(th.get('title'))
+            headings.append(heading.strip())
+        headings = headings[:-1]
+
+        # Get all the player data (the one found in the .csv)
+        for tr in playerTableData:
+            t_row = {}
+            for td, th in zip(tr.find_all("td"), headings):
+                cellValue = td.text.replace('\n', '').strip()
+                if th == "Nationality":
+                    t_row[th] = td.a.img.get('title')
+                elif th == "Name":
+                    player_href = td.a.get("href")
+                    player_id = player_href.split("=")[1].split("&")[0].strip()
+                    t_row["Player_ID"] = int(player_id)
+                    t_row[th] = td.get("data-fullname")
+                elif th == "Coach":
+                    t_row[th] = "Yes" if cellValue else "No"
+                elif th == "Specialty":
+                    spe = td.get("data-sortvalue")
+                    if not spe:
+                        t_row[th] = None
+                    else:
+                        t_row[th] = td.i.get('title')
+                elif th == "Highest bid":
+                    clean_th = clean_name(th)
+                    if int(td.get("data-sortvalue")) == 1:
+                        t_row[clean_th] = "No"
+                    else:
+                        t_row[clean_th] = "Yes"
+                elif th == "Injuries":
+                    injury = td.get("data-sortvalue")
+                    if not injury:
+                        t_row[th] = "Healthy"
+                    elif int(injury) == 2:
+                        t_row[th] = "Recovering"
+                    elif int(injury) == 3:
+                        t_row[th] = "Injured (1)"
+                    elif int(injury) == 4:
+                        t_row[th] = "Injured (2)"
+                    elif int(injury) == 5:
+                        t_row[th] = "Injured (3)"
+                    elif int(injury) == 6:
+                        t_row[th] = "Injured (4)"
+                    else:
+                        t_row[th] = "Healthy"
+                        # injury_length = td.i.get("data-injury-length")
+                        # t_row[th] = "Injured (" + injury_length + ")"
+                elif th == "Warnings":
+                    warning = td.get("data-sortvalue")
+                    if not warning:
+                        t_row[th] = None
+                    elif int(warning) == 1:
+                        t_row[th] = "1 yellow card"
+                    elif int(warning) == 2:
+                        t_row[th] = "2 yellow cards"
+                    elif int(warning) == 3:
+                        t_row[th] = "1 red card"
+                    else:
+                        t_row[th] = None
+                elif th == "Age":  # TODO change age format
+                    age = td.get("data-sortvalue")
+                    # age = float(age[:2] + "." + age[2:])
+                    age = int(age[:2])
+                    t_row[th] = age
+                elif th == "TSI":
+                    t_row[th] = int(td.get("data-sortvalue"))
+                elif th == "Wage":
+                    t_row[th] = int(int(td.get("data-sortvalue")) * 0.1)
+                elif th == "Bid":
+                    bid = int(td.get("data-sortvalue"))
+                    if bid == 1:
+                        bid = 0
+                    else:
+                        bid = int(bid * 0.1)
+                    t_row[th] = bid
+                elif th == "Deadline":
+                    date_time = cellValue.split(" ")
+                    date = str(date_time[0])
+                    timez = str(date_time[1])
+                    t_row["Transfer_Date"] = date
+                    t_row["Transfer_Time"] = timez
+                    t_row["Transfer_Date_Day"] = ""
+                    t_row["Transfer_Date_Week"] = 0
+                    t_row["Transfer_Date_Season"] = 0
+                    t_row["Search_Date"] = datetime.date.today().strftime("%d-%m-%Y")
+                    t_row["Transfer_ID"] = player_id + "_" + date  # unique transfer ID
+                elif th == "Weeks in club" or th == "Set Pieces":
+                    clean_th = clean_name(th)
+                    t_row[clean_th] = int(cellValue) if cellValue else None
+                else:
+                    t_row[th] = int(cellValue) if cellValue else None
+            data.append(t_row)
+
+        df_transfers = pd.DataFrame(data)
+
+    return df_transfers
 
 
 def get_search_pattern(skill, transfer_tracker=False):
@@ -414,3 +549,98 @@ def get_search_pattern(skill, transfer_tracker=False):
     df_skill_search_cases.to_csv(search_pattern_skill_csv, index=False)
 
     return df_skill_search_cases
+
+
+def get_next_page_to_scrap(row):
+    page_found = False
+    i = 1
+    next_page = 1
+    while not page_found:
+        if not row["searched_p" + str(i)]:
+            next_page = i
+            page_found = True
+        i += 1
+    return next_page
+
+
+def get_hattrick_date(driver, time_ref_dict=None, transfer_deadline=None):
+    timeout = 3
+    if time_ref_dict is not None:
+        ref_time = True
+    else:
+        ref_time = False
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    time_dict_init = {"launch_time": {"date": "",
+                                      "day": 0,
+                                      "day_name": 0,
+                                      "week": 0,
+                                      "season": 0
+                                      },
+                      "current_time": {"date": "",
+                                       "day": 0,
+                                       "day_name": 0,
+                                       "week": 0,
+                                       "season": 0
+                                       },
+                      "transfer_time": {"date": "",
+                                        "day": 0,
+                                        "day_name": 0,
+                                        "week": 0,
+                                        "season": 0
+                                        }
+                      }
+
+    if not ref_time:
+        time_dict = copy.deepcopy(time_dict_init)
+        calendar_id = "ctl00_ctl00_CPContent_CPMain_UpdatePanel1"
+        date_format = re.compile(r'Week (\d+) of (\d\d), Season (\d\d+)')
+        nav.wait("id", calendar_id, timeout, driver)
+        calendar_text = driver.find_element_by_id(calendar_id).text.split("\n")[0]
+        ht_date = date_format.search(calendar_text)
+
+        today = datetime.date.today()
+        time_dict["launch_time"]["date"] = today.strftime("%d-%m-%Y")
+        time_dict["launch_time"]["day"] = \
+            int(datetime.datetime.strptime(time_dict["launch_time"]["date"], '%d-%m-%Y').weekday())
+        time_dict["launch_time"]["day_name"] = day_names[time_dict["launch_time"]["day"]]
+        time_dict["launch_time"]["week"] = int(ht_date.group(1))
+        time_dict["launch_time"]["season"] = int(ht_date.group(3))
+
+    if ref_time and transfer_deadline is not None:
+        # Getting Current HT dates for current time
+        time_dict = copy.deepcopy(time_ref_dict)
+        date_launch = time_dict["launch_time"]["date"].split("-")
+        date_launch = datetime.date(int(date_launch[2]), int(date_launch[1]), int(date_launch[0]))
+        date_current = datetime.date.today()
+        delta_day_launch_current = (date_current - date_launch).days
+        delta_week_launch_current = (time_dict["launch_time"]["day"] +
+                                     delta_day_launch_current) // 7
+        delta_season_launch_current = (time_dict["launch_time"]["week"] +
+                                       delta_week_launch_current - 1) // 16
+        time_dict["current_time"]["date"] = date_current.strftime("%d-%m-%Y")
+        time_dict["current_time"]["day"] = \
+            int(datetime.datetime.strptime(time_dict["current_time"]["date"], '%d-%m-%Y').weekday())
+        time_dict["current_time"]["day_name"] = day_names[time_dict["current_time"]["day"]]
+        time_dict["current_time"]["week"] = ((time_dict["launch_time"]["week"] - 1 +
+                                              delta_week_launch_current) % 16) + 1
+        time_dict["current_time"]["season"] = time_dict["launch_time"]["season"] + \
+                                              delta_season_launch_current
+
+        # Getting Current HT dates for transfer time
+        date_transfer = transfer_deadline.split("-")
+        date_transfer = datetime.date(int(date_transfer[2]), int(date_transfer[1]), int(date_transfer[0]))
+        delta_day_transfer_current = (date_transfer - date_current).days
+        delta_week_transfer_current = (time_dict["current_time"]["day"] +
+                                       delta_day_transfer_current) // 7
+        delta_season_transfer_current = (time_dict["current_time"]["week"] +
+                                         delta_week_transfer_current - 1) // 16
+        time_dict["transfer_time"]["date"] = date_transfer.strftime("%d-%m-%Y")
+        time_dict["transfer_time"]["day"] = \
+            int(datetime.datetime.strptime(time_dict["transfer_time"]["date"], '%d-%m-%Y').weekday())
+        time_dict["transfer_time"]["day_name"] = day_names[time_dict["transfer_time"]["day"]]
+        time_dict["transfer_time"]["week"] = ((time_dict["current_time"]["week"] - 1 +
+                                               delta_week_transfer_current) % 16) + 1
+        time_dict["transfer_time"]["season"] = time_dict["current_time"]["season"] + \
+                                               delta_season_transfer_current
+
+    return time_dict

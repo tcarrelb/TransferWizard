@@ -15,21 +15,6 @@ class NoInternetException(Exception):
     pass
 
 
-def check_connection():
-    """
-    Checking the internet connection.
-
-    Returns
-    -------
-    Returns NoInternetException if not connected to Wifi.
-    """
-    ip_address = socket.gethostbyname(socket.gethostname())
-    if ip_address == '127.0.0.1':
-        raise NoInternetException('You have been disconnected from the internet.')
-
-    return
-
-
 def wait(element_type: str, element_name: str, timeout: float, driver: webdriver):
     """
     Functions that waits for an HTML element to be located.
