@@ -91,6 +91,7 @@ def launch_web_browser() -> webdriver:
     options = webdriver.ChromeOptions()
 
     options.add_argument('headless')
+    options.add_argument("--disable-gpu")
     driver = webdriver.Chrome('C:\Program Files (x86)\chromedriver.exe', options=options)
     driver.get(glova.login_info['url'])
     driver.set_page_load_timeout(timeout)

@@ -150,11 +150,11 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     for i in split_index:
         csv_track_i = csv_track.split(".")[0] + "_" + str(i) + ".csv"
         csv_db_i = csv_db.split(".")[0] + "_" + str(i) + ".csv"
-        df_csv_track_i = pd.read_csv(csv_track_i, index_col=False)
+        df_csv_track_i = pd.read_csv(os.path.join(out_dir, csv_track_i), index_col=False)
         df_transfer_tracker_final = pd.concat([df_transfer_tracker_final, df_csv_track_i],
                                               sort=False, ignore_index=True)
-        os.remove(csv_db_i)
-        os.remove(csv_track_i)
+        os.remove(os.path.join(out_dir, csv_db_i))
+        os.remove(os.path.join(out_dir, csv_track_i))
 
     df_transfer_tracker_final.reset_index(drop=True, inplace=True)
     df_transfer_tracker_final.to_csv(os.path.join(out_dir, csv_track), index=False)
