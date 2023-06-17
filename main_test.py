@@ -24,38 +24,13 @@ from itertools import repeat
 from tqdm import tqdm
 from datetime import datetime, timedelta
 
+import hattrick_manager as hatman
 import hattrick_manager.scrappers as rap
 import hattrick_manager.navigators as nav
 import hattrick_manager.computers as comp
 import hattrick_manager.readers as read
 import hattrick_manager.checkers as che
 
-transfer_dict_init = {
-    "Age": {"Years": {"Min": 17,
-                      "Max": 17,
-                      },
-            "Days": {"Min": 0,
-                     "Max": 1,
-                     },
-            },
-    "Skills": {"Skill_1": {"Name": "Winger",
-                           "Min": 6,
-                           "Max": 8,
-                           },
-               "Skill_2": {"Name": None,
-                           "Min": 17,
-                           "Max": 17,
-                           },
-               "Skill_3": {"Name": None,
-                           "Min": 17,
-                           "Max": 17,
-                           },
-               "Skill_4": {"Name": None,
-                           "Min": 17,
-                           "Max": 17,
-                           },
-               },
-}
 
 '''
 How to update the Chrome Driver:
@@ -70,191 +45,267 @@ https://sites.google.com/chromium.org/driver/
 # df = read.collect_team_data()
 # df_top_scorers = visu.display_top_scorers()
 
-n_procs = 40
+def get_transfer_closure(player_id, transfer_deadline, driver):
+    timeout = 2
+    transfer_aborted = False
+    transfer_completed = False
+    more_recent_transfer = False
+    next_transfer_after_deadline = False
+    player_exists = True
+    dict_transfer_closure = {}
+
+    search_icon = '//*[@id="shortcutsNoSupporter"]/div/a[1]/img'
+    search_drop_menu = 'ctl00_ctl00_CPContent_CPMain_ddlCategory'
+    player_id_box = 'ctl00_ctl00_CPContent_CPMain_txtSearchPlayerID'
+    search_player_button = '//*[@id="ctl00_ctl00_CPContent_CPMain_btnSearchPlayers"]'
+    search_res_table = 'ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00'
+    player_link = 'ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00_ctl04_lnkPlayer'
+    owner_table = '//*[@id="mainBody"]/div[3]/table/tbody/tr/td[1]'
+
+    nav.wait("xpath", search_icon, timeout, driver)
+    driver.find_element_by_xpath(search_icon).click()
+
+    nav.wait("id", search_drop_menu, timeout, driver)
+    drop = Select(driver.find_element_by_id(search_drop_menu))
+    drop.select_by_value("5")  # drop.select_by_value("Players")
+
+    nav.wait("id", player_id_box, timeout, driver)
+    id_input = driver.find_element_by_id(player_id_box)
+    id_input.send_keys(str(player_id))
+
+    nav.wait("xpath", search_player_button, timeout, driver)
+    driver.find_element_by_xpath(search_player_button).click()
+
+    nav.wait("id", search_res_table, timeout, driver)
+    try:
+        driver.find_element_by_id(player_link).click()
+    except:
+        player_exists = False
+        # print("Player with ID {} retired".format(str(player_id)))
+    # wait("id", player_link, timeout, driver)
+
+    if player_exists:
+        time.sleep(0.1)
+        nav.wait("xpath", owner_table, timeout, driver)
+        owner = driver.find_element_by_class_name("ownerAndStatusPlayerInfo")
+        owner_html = owner.get_attribute("innerHTML").split("<a")[1].split("</a>")[0]
+        owner_content = owner_html.split('"')
+        owner_id = None
+        owner_href = None
+        owner_name = None
+
+        for i, val in enumerate(owner_content):
+            if "TeamID" in str(val):
+                owner_id = int(val.split("=")[1])
+                owner_href = str(val)
+            if "title" in str(val):
+                owner_name = str(owner_content[i + 1].strip())
+
+        html_doc = driver.page_source
+        soup = BeautifulSoup(html_doc, "html.parser")  # the page is parsed
+        transfer_history = soup.find_all(id="transferHistory")[0]
+        try:
+            transfer_table = transfer_history.find_all("table")[0]
+        except IndexError:
+            transfer_aborted = True
+
+        if not transfer_aborted:
+            transfer_head = transfer_table.thead.find_all("tr")[0].find_all("th")
+            transfer_rows = transfer_table.tbody.find_all("tr")  # all transfer data rows
+            j = 0
+            old_seller_name = None
+            old_seller_id = None
+            old_seller_href = None
+
+            for row in transfer_rows:
+                transfer_body = row.find_all("td")
+
+                for i, col in enumerate(transfer_head):
+                    cell_value = transfer_body[i].text.strip()
+                    if str(col.text) == "Deadline":
+                        dict_transfer_closure["Player_ID"] = player_id
+                        if str(cell_value) != transfer_deadline:
+                            date_transfer_x = comp.reverse_date(str(cell_value))
+                            date_transfer_dl = comp.reverse_date(transfer_deadline)
+                            if date_transfer_x > date_transfer_dl:
+                                more_recent_transfer = True
+                                next_transfer_after_deadline = True
+                            else:
+                                next_transfer_after_deadline = False
+                            if j + 1 == len(transfer_rows):
+                                transfer_aborted = True  # last transfer, not matching date, transfer was aborted
+                                dict_transfer_closure["Transfer_Status"] = "Aborted"
+                        else:
+                            transfer_completed = True
+                            dict_transfer_closure["Transfer_Status"] = "Completed"
+                    elif str(col.text) == "Seller":
+                        seller_href = transfer_body[i].div.a.get("href")
+                        new_seller_name = str(cell_value)
+                        new_seller_id = int(seller_href.split("=")[1])
+                        new_seller_href = str(seller_href)
+                        if not transfer_aborted:
+                            if next_transfer_after_deadline:
+                                dict_transfer_closure["Buyer_Name"] = old_seller_name
+                                dict_transfer_closure["Buyer_ID"] = old_seller_id
+                                dict_transfer_closure["Buyer_Href"] = old_seller_href
+                            else:
+                                dict_transfer_closure["Buyer_Name"] = owner_name
+                                dict_transfer_closure["Buyer_ID"] = owner_id
+                                dict_transfer_closure["Buyer_Href"] = owner_href
+                            dict_transfer_closure["Seller_Name"] = new_seller_name
+                            dict_transfer_closure["Seller_ID"] = new_seller_id
+                            dict_transfer_closure["Seller_Href"] = new_seller_href
+                        else:
+                            dict_transfer_closure["Buyer_Name"] = None
+                            dict_transfer_closure["Buyer_ID"] = None
+                            dict_transfer_closure["Buyer_Href"] = None
+                            if more_recent_transfer:
+                                if next_transfer_after_deadline:
+                                    dict_transfer_closure["Seller_Name"] = new_seller_name
+                                    dict_transfer_closure["Seller_ID"] = new_seller_id
+                                    dict_transfer_closure["Seller_Href"] = new_seller_href
+                            else:
+                                dict_transfer_closure["Seller_Name"] = owner_name
+                                dict_transfer_closure["Seller_ID"] = owner_id
+                                dict_transfer_closure["Seller_Href"] = owner_href
+
+                    elif str(col.text) == "TSI":
+                        if not transfer_aborted:
+                            dict_transfer_closure[str(col.text)] = int(cell_value.replace("\xa0", ""))
+                    elif str(col.text) == "Age":
+                        if not transfer_aborted:
+                            age_str = cell_value.split("(")[0]
+                            days_str = cell_value.split("(")[1].split(")")[0]
+                            dict_transfer_closure[str(col.text)] = int(age_str)
+                            dict_transfer_closure["Days"] = int(days_str)
+                    elif str(col.text) == "Price":
+                        if not transfer_aborted:
+                            cell_value = cell_value.split("€")[0]
+                            dict_transfer_closure["Price_Euros"] = int(cell_value.replace("\xa0", ""))
+                        else:
+                            dict_transfer_closure["Price_Euros"] = None
+                    else:
+                        pass
+
+                old_seller_name = new_seller_name
+                old_seller_id = new_seller_id
+                old_seller_href = new_seller_href
+
+                if transfer_completed:
+                    break
+
+                j += 1
+        else:
+            dict_transfer_closure["Player_ID"] = player_id
+            dict_transfer_closure["Transfer_Status"] = "Aborted"
+            dict_transfer_closure["Buyer_Name"] = None
+            dict_transfer_closure["Buyer_ID"] = None
+            dict_transfer_closure["Buyer_Href"] = None
+            dict_transfer_closure["Seller_Name"] = owner_name
+            dict_transfer_closure["Seller_ID"] = owner_id
+            dict_transfer_closure["Seller_Href"] = owner_href
+            dict_transfer_closure["TSI"] = None
+            dict_transfer_closure["Age"] = None
+            dict_transfer_closure["Days"] = None
+            dict_transfer_closure["Price_Euros"] = None
+
+        skill_elem = soup.find_all("a", attrs={"class": "skill"})
+        dict_transfer_closure["Friendliness"] = str(skill_elem[0].text)
+        dict_transfer_closure["Aggressiveness"] = str(skill_elem[1].text)
+        dict_transfer_closure["Honesty"] = str(skill_elem[2].text)
+    else:
+        dict_transfer_closure["Player_ID"] = player_id
+        dict_transfer_closure["Transfer_Status"] = "Retired"
+        dict_transfer_closure["Buyer_Name"] = None
+        dict_transfer_closure["Buyer_ID"] = None
+        dict_transfer_closure["Buyer_Href"] = None
+        dict_transfer_closure["Seller_Name"] = None
+        dict_transfer_closure["Seller_ID"] = None
+        dict_transfer_closure["Seller_Href"] = None
+        dict_transfer_closure["Price_Euros"] = None
+        dict_transfer_closure["Friendliness"] = None
+        dict_transfer_closure["Aggressiveness"] = None
+        dict_transfer_closure["Honesty"] = None
+
+    return pd.DataFrame([dict_transfer_closure])
+
+
+procs = 4
+ref_data_dir = os.path.join(hatman.__path__[0], 'reference_data')
+f = open(os.path.join(ref_data_dir, 'login_info.json'))
+launch_info = json.load(f)
 timeout = 2
-skill = 'playmaking'
-df_skill_search_cases = read.get_search_pattern(skill, transfer_tracker=False)
+split_index = 0
+transfer_data_dir = os.path.join(hatman.__path__[0], 'output', 'transfer_data', 'playmaking_2023-06-15_20-18')
+df_open_name = "playmaking_transfer_data.csv"
+df_pre = pd.read_csv(os.path.join(transfer_data_dir, df_open_name), index_col=False)
+df_pre["Closed"] = False
+csv_track_name = "track"
+csv_track = "track"
+csv_db_name = "db"
+csv_db = "db"
+split_index = 0
 
-# 0a) We start be defining or retrieving the transfer tracker for the given skill
-# This csv file is a bit different than the one used for the search pattern determination
-# It has more columns and tracks also the pages that were searched for each transfer query
-csv_track = skill + "_transfer_tracker.csv"
-csv_db = skill + "_transfer_data.csv"
-out_dir = os.path.join(os.path.dirname(__file__), 'hattrick_manager', 'output', 'transfer_data')
-log_dir = os.path.join(os.path.dirname(__file__), 'hattrick_manager', 'log')
-log_name = "open_transfer_log"
 
-if not os.path.isfile(csv_track):
-    df_transfer_tracker = read.get_search_pattern(skill, transfer_tracker=True)
-else:
-    df_transfer_tracker = pd.read_csv(csv_track, index_col=False)
-
-df_split = np.array_split(df_transfer_tracker, n_procs)
-split_index = np.arange(0, n_procs, 1)
-
-split_index = 20
-df_transfer_tracker = df_split[split_index]
-df_transfer_tracker.reset_index(inplace=True, drop=True)
-
-# Now we will  configure the logger
-log_file_path = os.path.join(log_dir, f"{log_name}_{split_index}.log")
-logging.basicConfig(filename=log_file_path, format='%(asctime)s %(message)s', filemode='w')
-# We create the logger object
-logger = logging.getLogger()
-# Now we are going to set the threshold of logger to DEBUG
-logger.setLevel(logging.CRITICAL)
-
-# Beginning of function
-skill_cap = skill.capitalize()
-csv_name = skill + "_transfer_tracker_" + str(split_index) + ".csv"
-csv_db = skill + "_transfer_data_" + str(split_index) + ".csv"
-df_open_transfer_data = pd.DataFrame()  # the DataFrame that will group all the transfer data results for the given skill
-transfer_page_id = "ctl00_ctl00_CPContent_CPMain_ucPager_repPages_ctl0"
-timeout = 3
+# df_pre, split_index, launch_info, csv_track_name, csv_db_name = closure_transfer_inputs
+# csv_track = csv_track_name.split(".")[0] + "_" + str(split_index) + ".csv"
+# csv_db = csv_db_name.split(".")[0] + "_" + str(split_index) + ".csv"
+df_closed_transfer_data = pd.DataFrame()
 break_it = False
 
-while not df_transfer_tracker["researched"].all(axis=0):
+while not df_pre["Closed"].all(axis=0):
     # 1) Get the transfer dictionary for the current transfer query and launch the query
     che.check_wifi_connection()
     driver = nav.launch_web_browser()
     try:
-        time_dict_ref = read.get_hattrick_date(driver, time_ref_dict=None, transfer_deadline=None)
+        read.get_hattrick_date(driver, time_ref_dict=None, transfer_deadline=None)
     except TimeoutException:
         print("\nProcess {} restarting".format(str(split_index)))
-        logger.critical("TimeoutException getting hattrick date. Process {} restarting".format(str(split_index)))
         driver.quit()
     except nav.NoInternetException:
         sys.exit(0, "Reconnect to Wifi before launching script again.")
 
-    for i_row, row in df_transfer_tracker.iterrows():
+    closed_transfer_indices = list()
+    for i_row, row in df_pre.iterrows():
         if break_it:
             break_it = False
             break
-        current_query_data_collected = row["researched"]
-        if not current_query_data_collected:
-            transfer_dict = copy.deepcopy(transfer_dict_init)  # intialize search dictionary
-            transfer_dict["Age"]["Years"]["Min"] = row["min_year"]
-            transfer_dict["Age"]["Years"]["Max"] = row["max_year"]
-            transfer_dict["Age"]["Days"]["Min"] = row["min_days"]
-            transfer_dict["Age"]["Days"]["Max"] = row["max_days"]
-            transfer_dict["Skills"]["Skill_1"]["Name"] = skill_cap
-            transfer_dict["Skills"]["Skill_1"]["Min"] = row["section_min"]
-            transfer_dict["Skills"]["Skill_1"]["Max"] = row["section_max"]
-            try:
-                n_pages, n_results = rap.launch_transfer_search(driver, transfer_dict)
-            except TimeoutException:
-                print("\nTimeoutException launching transfer search. Process {} restarting".format(str(split_index)))
-                logger.critical(
-                    "TimeoutException launching transfer search. Process {} restarting".format(str(split_index))
-                )
-                driver.quit()
-                break
-
-            except nav.NoInternetException:
-                sys.exit(0, "Reconnect to Wifi before launching script again.")
-
-            # 2) Write the number of results found in tracking csv
-            df_transfer_tracker.at[i_row, "n_results"] = n_results
-
-            # 3) Establish the next page (1, 2, 3 or 4) that needs to be scrapped
-            # A function that looks at columns page1_collected, page2_collected...
-            # in the transfer tracker needs to be created to get this page.
-            next_page_to_scrap = read.get_next_page_to_scrap(row)  # 3 for example
-
-            while not current_query_data_collected:
+        closed_transfer = row["Closed"]
+        if not closed_transfer:
+            player_id = row["Player_ID"]
+            deadline = row["Transfer_Date"].replace("/", "-")
+            dd_dt_p1 = datetime.strptime(deadline, "%d-%m-%Y") + timedelta(days=1)
+            if datetime.now() > dd_dt_p1:  # the transfer has already been closed
+                closed_transfer_indices.append(i_row)
                 che.check_wifi_connection()
-
-                # 4) Go to that page using the htlm id key
                 try:
-                    if next_page_to_scrap > 1:
-                        xtransfer_page_id = transfer_page_id + str(next_page_to_scrap - 1) + \
-                                            "_p" + str(next_page_to_scrap - 1)
-                        nav.wait("id", xtransfer_page_id, timeout, driver)
-                        driver.find_element_by_id(xtransfer_page_id).click()
+                    df_row_closure = get_transfer_closure(player_id, deadline, driver)
                 except TimeoutException:
                     print("\nProcess {} restarting".format(str(split_index)))
-                    logger.critical(
-                        "TimeoutException finding transfer page. Process {} restarting".format(str(split_index))
-                    )
-                    break_it = True
                     driver.quit()
                     break
                 except nav.NoInternetException:
                     sys.exit(0, "Reconnect to Wifi before launching script again.")
+                df_closed_transfer_data = pd.concat([df_closed_transfer_data, df_row_closure],
+                                                    sort=False, ignore_index=True)
+            else:
+                sys.exit(0, "Transfer has not been closed yet.")
 
-                # 5) Collect page transfer data
-                try:
-                    che.check_wifi_connection()
-                    df_page_transfer = read.collect_1p_transfer_search_data(driver)
-                except TimeoutException:
-                    print("\nProcess {} restarting".format(str(split_index)))
-                    logger.critical(
-                        "TimeoutException collecting page data transfer. Process {} restarting".format(str(split_index))
-                    )
-                    break_it = True
-                    driver.quit()
-                    break
-                except nav.NoInternetException:
-                    sys.exit(0, "Reconnect to Wifi before launching script again.")
 
-                # 6) Add transfer ID, Hattrick Dates
-                if not df_page_transfer.empty:
-                    df_page_transfer["Unique_Transfer_Key"] = ""
-                    df_page_transfer["Searched_Skill_Name"] = ""
-                    df_page_transfer["Searched_Age_Range"] = ""
-                    df_page_transfer["Searched_Skill_Range"] = ""
-                    df_page_transfer["Number_Search_Results"] = 0
+        df_pre.at[i_row, "Closed"] = True
+        df_pre.to_csv(csv_track, index=False)
 
-                    for i, row2 in df_page_transfer.iterrows():
-                        run_dict = row2.to_dict()
-                        keys_to_keep = ["Nationality", "Transfer_ID", "Speciality", "Transfer_Time"]
-                        run_dict2 = {k: v for k, v in run_dict.items() if k not in keys_to_keep}
-                        df_page_transfer.at[i, "Unique_Transfer_Key"] = str(
-                            comp.generate_transfer_key(run_dict2))
-                        df_page_transfer.at[i, "Search_Date"] = time_dict_ref["launch_time"]["date"]
-                        time_dict = read.get_hattrick_date(driver, time_ref_dict=time_dict_ref,
-                                                          transfer_deadline=df_page_transfer.at[
-                                                              i, "Transfer_Date"])
-                        df_page_transfer.at[i, "Transfer_Date_Day"] = time_dict["transfer_time"]["day_name"]
-                        df_page_transfer.at[i, "Transfer_Date_Week"] = time_dict["transfer_time"][
-                            "week"]  # TODO: Fix Hattrick Week
-                        df_page_transfer.at[i, "Transfer_Date_Season"] = time_dict["transfer_time"]["season"]
+        df_db_addition = df_pre.merge(df_closed_transfer_data, on="Player_ID")
+        df_db_addition.drop(["Closed"], axis=1, inplace=True)
+        df_db_addition.to_csv(csv_db, index=False)
 
-                        # 7) Add this DF to the df_open_transfer_data DF. Keep unique transfer player ID
-                        df_page_transfer.at[i, "Searched_Skill_Name"] = skill
-                        df_page_transfer.at[i, "Searched_Age_Range"] = \
-                            str(transfer_dict["Age"]["Years"]["Min"]) + "." + \
-                            str(transfer_dict["Age"]["Days"]["Min"]).zfill(3) + "_" + \
-                            str(transfer_dict["Age"]["Years"]["Max"]) + "." + \
-                            str(transfer_dict["Age"]["Days"]["Max"]).zfill(3)
-                        df_page_transfer.at[i, "Searched_Skill_Range"] = \
-                            str(transfer_dict["Skills"]["Skill_1"]["Min"]) + "_" + \
-                            str(transfer_dict["Skills"]["Skill_1"]["Max"])
-                        df_page_transfer.at[i, "Number_Search_Results"] = n_results
+        print("\nProcess {} progress:".format(str(split_index)))
 
-                # 8) Add this DF to the df_open_transfer_data DF. Keep unique transfer player ID
-                if not df_page_transfer.empty:
-                    df_open_transfer_data = pd.concat([df_open_transfer_data, df_page_transfer], sort=False,
-                                                      ignore_index=True)
-                df_open_transfer_data.drop_duplicates(subset="Unique_Transfer_Key", inplace=True)
 
-                # 9) Write the df_open_transfer_data to update the csv
-                df_open_transfer_data.to_csv(os.path.join(out_dir, csv_db), index=False)
-
-                # 10) Update the df_transfer_tracker to say that the page has been searched
-                df_transfer_tracker.at[i_row, "searched_p" + str(next_page_to_scrap)] = True
-
-                # 11) Establish if all pages have been searched for this transfer query
-                current_query_data_collected = che.check_search_status(df_transfer_tracker, i_row, n_pages)
-                if current_query_data_collected:
-                    df_transfer_tracker.at[i_row, "researched"] = True
-                df_transfer_tracker.to_csv(os.path.join(out_dir, csv_name), index=False)
-
-                # 12) Increment of the next page to search
-                next_page_to_scrap += 1
-
-            # Print to log
-            logger.critical(
-                f"Open data collection. Skill: {skill} / Index: {split_index} out of {n_procs} / Transfer Search no. "
-                f"{str(i_row + 1).zfill(3)} out of {str(df_transfer_tracker.shape[0]).zfill(3)} --> COMPLETE"
-            )
+# if __name__ == '__main__':
+#     print(f"Launching transfer scrapping with {str(procs)} processor(s)...\n")
+#     start = time.perf_counter()
+#     df_open_transfer_data = rap.scrap_transfer_market(launch_info, "playmaking", n_procs=procs)
+#     # df_closed_transfer_data = rap.enrich_transfer_database(launch_info, "playmaking", n_procs=procs)
+#     end = time.perf_counter()
+#     print(f"\nFinished in {round(end-start, 2)} second(s)")

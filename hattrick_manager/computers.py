@@ -23,3 +23,14 @@ def split_dataframe(df, chunk_size=10000):
     for i in range(num_chunks):
         chunks.append(df[i * chunk_size:(i + 1) * chunk_size])
     return chunks
+
+
+def reverse_date(old_d):
+    delim = "-"
+    old_d = old_d.split(delim)[::-1]
+    new_d = ""
+    for x in old_d:
+        new_d += (x + delim)
+    new_d = new_d[:-1]
+
+    return new_d

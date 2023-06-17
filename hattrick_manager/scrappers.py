@@ -151,6 +151,8 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     df_otd = deepcopy(df_open_transfer_data)
     df_otd = df_otd.sort_values(['Transfer_Date', 'Transfer_Time'], ascending=[False, False])
     transfer_date = df_otd['Transfer_Date'].iloc[0]
+    transfer_date_list = transfer_date.split("-")
+    transfer_date = f"{transfer_date_list[2]}-{transfer_date_list[1]}-{transfer_date_list[0]}"
     transfer_time = df_otd['Transfer_Time'].iloc[0]
     transfer_time = transfer_time.replace(":", "-")
     out_final_dir = os.path.join(out_dir, f"{skill}_{transfer_date}_{transfer_time}")
