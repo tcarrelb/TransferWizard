@@ -90,7 +90,12 @@ def launch_web_browser() -> webdriver:
     sleep_duration = 2
     options = webdriver.ChromeOptions()
 
-    options.add_argument('headless')
+    options.add_argument("start-maximized")
+    options.add_argument("enable-automation")
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-browser-side-navigation")
     options.add_argument("--disable-gpu")
     driver = webdriver.Chrome('C:\Program Files (x86)\chromedriver.exe', options=options)
     driver.get(glova.login_info['url'])

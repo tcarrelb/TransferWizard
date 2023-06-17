@@ -20,6 +20,7 @@ import copy
 import sys
 import os
 import numpy as np
+from copy import deepcopy
 from os.path import isfile, join
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -114,6 +115,7 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     # This csv file is a bit different than the one used for the search pattern determination
     # It has more columns and tracks also the pages that were searched for each transfer query
     out_dir = os.path.join(hatman.__path__[0], 'output', 'transfer_data')
+    log_dir = os.path.join(hatman.__path__[0], 'log')
     search_patterns_dir = os.path.join(hatman.__path__[0], 'reference_data', 'transfer_search_patterns')
     csv_track = skill + "_transfer_tracker.csv"
     csv_db = skill + "_transfer_data.csv"
@@ -144,7 +146,19 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     df_open_transfer_data.drop_duplicates(subset="Unique_Transfer_Key", inplace=True)
     df_open_transfer_data.reset_index(drop=True, inplace=True)
     df_open_transfer_data["Closed"] = False
-    df_open_transfer_data.to_csv(os.path.join(out_dir, csv_db), index=False)
+
+    # Create directories to store results:
+    df_otd = deepcopy(df_open_transfer_data)
+    df_otd = df_otd.sort_values(['Transfer_Date', 'Transfer_Time'], ascending=[False, False])
+    transfer_date = df_otd['Transfer_Date'].iloc[0]
+    transfer_time = df_otd['Transfer_Time'].iloc[0]
+    transfer_time = transfer_time.replace(":", "-")
+    out_final_dir = os.path.join(out_dir, f"{skill}_{transfer_date}_{transfer_time}")
+    log_final_dir = os.path.join(log_dir, f"{skill}_{transfer_date}_{transfer_time}")
+    if not os.path.exists(out_final_dir):
+        os.makedirs(out_final_dir)
+    if not os.path.exists(log_final_dir):
+        os.makedirs(log_final_dir)
 
     df_transfer_tracker_final = pd.DataFrame()
     for i in split_index:
@@ -155,9 +169,14 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
                                               sort=False, ignore_index=True)
         os.remove(os.path.join(out_dir, csv_db_i))
         os.remove(os.path.join(out_dir, csv_track_i))
+        log_file_old_i = os.path.join(log_dir, f"open_transfer_log_{i}.log")
+        log_file_new_i = os.path.join(log_final_dir, f"open_transfer_log_{i}.log")
+        os.rename(log_file_old_i, log_file_new_i)
 
     df_transfer_tracker_final.reset_index(drop=True, inplace=True)
-    df_transfer_tracker_final.to_csv(os.path.join(out_dir, csv_track), index=False)
+    # Save the data:
+    df_transfer_tracker_final.to_csv(os.path.join(out_final_dir, csv_track), index=False)
+    df_open_transfer_data.to_csv(os.path.join(out_final_dir, csv_db), index=False)
 
     return df_open_transfer_data
 
