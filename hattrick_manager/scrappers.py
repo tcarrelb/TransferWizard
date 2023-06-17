@@ -19,7 +19,6 @@ import time
 import copy
 import sys
 import os
-import logging
 import numpy as np
 from os.path import isfile, join
 from bs4 import BeautifulSoup
@@ -122,7 +121,7 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     if not os.path.isfile(os.path.join(search_patterns_dir, csv_track)):
         df_transfer_tracker = comp.get_search_pattern(skill, transfer_tracker=True)
     else:
-        df_transfer_tracker = pd.read_csv(os.path.isfile(os.path.join(search_patterns_dir, csv_track)), index_col=False)
+        df_transfer_tracker = pd.read_csv(os.path.join(search_patterns_dir, csv_track), index_col=False)
 
     # 0b) The transfer tracker is split in X blocks depending on the number of processors required
     # Note that the script does not use multi-threading, it uses multi-processing
@@ -167,6 +166,7 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
     df_transfer_tracker, split_index, launch_info, skill, n_procs = scrap_transfer_inputs
 
     # Beginning of function
+    df_transfer_tracker.reset_index(drop=True, inplace=True)
     skill_cap = skill.capitalize()
     csv_name = skill + "_transfer_tracker_" + str(split_index) + ".csv"
     csv_db = skill + "_transfer_data_" + str(split_index) + ".csv"
@@ -181,11 +181,6 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
     log_name = "open_transfer_log"
     # Now we will  configure the logger
     log_file_path = os.path.join(log_dir, f"{log_name}_{split_index}.log")
-    logging.basicConfig(filename=log_file_path, format='%(asctime)s %(message)s', filemode='w')
-    # We create the logger object
-    logger = logging.getLogger()
-    # Now we are going to set the threshold of logger to DEBUG
-    logger.setLevel(logging.CRITICAL)
 
     while not df_transfer_tracker["researched"].all(axis=0):
         # 1) Get the transfer dictionary for the current transfer query and launch the query
@@ -195,7 +190,8 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
             time_dict_ref = read.get_hattrick_date(driver, time_ref_dict=None, transfer_deadline=None)
         except TimeoutException:
             print("\nProcess {} restarting".format(str(split_index)))
-            logger.critical("TimeoutException getting hattrick date. Process {} restarting".format(str(split_index)))
+            with open(log_file_path, "a+") as f:
+                f.write("TimeoutException getting hattrick date. Process {} restarting\n".format(str(split_index)))
             driver.quit()
         except nav.NoInternetException:
             sys.exit(0, "Reconnect to Wifi before launching script again.")
@@ -219,9 +215,11 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
                 except TimeoutException:
                     print(
                         "\nTimeoutException launching transfer search. Process {} restarting".format(str(split_index)))
-                    logger.critical(
-                        "TimeoutException launching transfer search. Process {} restarting".format(str(split_index))
-                    )
+                    with open(log_file_path, "a+") as f:
+                        f.write(
+                            "TimeoutException launching transfer search. Process {} restarting"
+                            "\n".format(str(split_index))
+                        )
                     driver.quit()
                     break
 
@@ -248,9 +246,11 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
                             driver.find_element_by_id(xtransfer_page_id).click()
                     except TimeoutException:
                         print("\nProcess {} restarting".format(str(split_index)))
-                        logger.critical(
-                            "TimeoutException finding transfer page. Process {} restarting".format(str(split_index))
-                        )
+                        with open(log_file_path, "a+") as f:
+                            f.write(
+                                "TimeoutException finding transfer page. Process {} restarting"
+                                "\n".format(str(split_index))
+                            )
                         break_it = True
                         driver.quit()
                         break
@@ -263,10 +263,11 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
                         df_page_transfer = read.collect_1p_transfer_search_data(driver)
                     except TimeoutException:
                         print("\nProcess {} restarting".format(str(split_index)))
-                        logger.critical(
-                            "TimeoutException collecting page data transfer. Process {} restarting".format(
-                                str(split_index))
-                        )
+                        with open(log_file_path, "a+") as f:
+                            f.write(
+                                "TimeoutException collecting page data transfer. Process {} restarting\n".format(
+                                    str(split_index))
+                            )
                         break_it = True
                         driver.quit()
                         break
@@ -330,9 +331,13 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
                     next_page_to_scrap += 1
 
                 # Print to log
-                logger.critical(
-                    f"Open data collection. Skill: {skill} / Index: {split_index} out of {n_procs} / Transfer Search no. "
-                    f"{str(i_row + 1).zfill(3)} out of {str(df_transfer_tracker.shape[0]).zfill(3)} --> COMPLETE"
-                )
+                with open(log_file_path, "a+") as f:
+                    f.write(
+                        f"Open data collection. Skill: {skill} / Index: {split_index} out of {n_procs} / Transfer "
+                        f"Search no. {str(i_row + 1).zfill(3)} out of {str(df_transfer_tracker.shape[0]).zfill(3)} "
+                        f"--> COMPLETE\n"
+                    )
+
+        driver.quit()
 
     return df_open_transfer_data
