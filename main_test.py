@@ -50,7 +50,7 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
     transfer_aborted = False
     transfer_completed = False
     more_recent_transfer = False
-    next_transfer_after_deadline = False
+    closing_latest_transfer = True
     player_exists = True
     dict_transfer_closure = {}
 
@@ -60,58 +60,70 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
     search_player_button = '//*[@id="ctl00_ctl00_CPContent_CPMain_btnSearchPlayers"]'
     search_res_table = 'ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00'
     player_link = 'ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00_ctl04_lnkPlayer'
-    owner_table = '//*[@id="mainBody"]/div[3]/table/tbody/tr/td[1]'
+    transfer_history_tab_id = '//*[@id="ctl00_ctl00_CPContent_CPMain_btnViewTransferHistory"]'
+    player_gentleness_xpath = '//*[@id="mainBody"]/p/a[1]'
+    player_aggressiveness_xpath = '//*[@id="mainBody"]/p/a[2]'
+    player_honesty_xpath = '//*[@id="mainBody"]/p/a[3]'
 
+    # Click on the hattrick search icon:
     nav.wait("xpath", search_icon, timeout, driver)
     driver.find_element_by_xpath(search_icon).click()
 
+    # Select the "player" category:
     nav.wait("id", search_drop_menu, timeout, driver)
     drop = Select(driver.find_element_by_id(search_drop_menu))
     drop.select_by_value("5")  # drop.select_by_value("Players")
 
+    # Enter the player ID:
     nav.wait("id", player_id_box, timeout, driver)
     id_input = driver.find_element_by_id(player_id_box)
     id_input.send_keys(str(player_id))
 
+    # Click on the "Search" button:
     nav.wait("xpath", search_player_button, timeout, driver)
     driver.find_element_by_xpath(search_player_button).click()
 
+    # Click on the search result link:
     nav.wait("id", search_res_table, timeout, driver)
     try:
         driver.find_element_by_id(player_link).click()
-    except:
+    except:  # TODO: find the specific exception
         player_exists = False
-        # print("Player with ID {} retired".format(str(player_id)))
+        print("Player with ID {} retired".format(str(player_id)))
     # wait("id", player_link, timeout, driver)
 
     if player_exists:
         time.sleep(0.1)
-        nav.wait("xpath", owner_table, timeout, driver)
-        owner = driver.find_element_by_class_name("ownerAndStatusPlayerInfo")
-        owner_html = owner.get_attribute("innerHTML").split("<a")[1].split("</a>")[0]
-        owner_content = owner_html.split('"')
-        owner_id = None
-        owner_href = None
-        owner_name = None
+        """Having to deal with a dynamic table (https://www.tutorialspoint.com/
+        how-to-click-on-a-button-with-javascript-executor-in-selenium-with-python) we locate the transfer history tab
+        and we activate it to retrieve the right table."""
+        transfer_history_tab = driver.find_element_by_xpath(transfer_history_tab_id)
+        driver.execute_script("arguments[0].click();", transfer_history_tab)
 
-        for i, val in enumerate(owner_content):
-            if "TeamID" in str(val):
-                owner_id = int(val.split("=")[1])
-                owner_href = str(val)
-            if "title" in str(val):
-                owner_name = str(owner_content[i + 1].strip())
-
+        # Once this is done, we can parse the web page to retrieve transfer data:
         html_doc = driver.page_source
         soup = BeautifulSoup(html_doc, "html.parser")  # the page is parsed
-        transfer_history = soup.find_all(id="transferHistory")[0]
-        try:
-            transfer_table = transfer_history.find_all("table")[0]
-        except IndexError:
+        try:  # Check if the player has some transfer history
+            transfer_history = soup.find("table", {"class":"htbox-table"})
+        except:  # TODO: find the specific error
             transfer_aborted = True
 
+        # Get player personality:
+        dict_transfer_closure["Player_ID"] = player_id
+        dict_transfer_closure["Gentleness"] = driver.find_element_by_xpath(player_gentleness_xpath).text
+        dict_transfer_closure["Aggressiveness"] = driver.find_element_by_xpath(player_aggressiveness_xpath).text
+        dict_transfer_closure["Honesty"] = driver.find_element_by_xpath(player_honesty_xpath).text
+
+        # Get owner details:
+        owner_table = soup.find('div', attrs={"class":"ownerAndStatusPlayerInfo"}).table.tbody
+        owner_name = owner_table.find_all("tr")[0].find_all("td")[1].a.text
+        owner_href = owner_table.find_all("tr")[0].find_all("td")[1].a.get("href")
+        owner_id = int(owner_href.split("TeamID=")[-1])
+
         if not transfer_aborted:
-            transfer_head = transfer_table.thead.find_all("tr")[0].find_all("th")
-            transfer_rows = transfer_table.tbody.find_all("tr")  # all transfer data rows
+            transfer_headers = transfer_history.thead.find_all("tr")[0].find_all("th")
+            transfer_headers = [tag.text for tag in transfer_headers]
+            transfer_rows = transfer_history.tbody.find_all("tr")  # all transfer data rows
             j = 0
             old_seller_name = None
             old_seller_id = None
@@ -119,82 +131,88 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
 
             for row in transfer_rows:
                 transfer_body = row.find_all("td")
+                transfer_date = transfer_body[0].text.strip()
+                if transfer_date == transfer_deadline:  # this is the transfer we need to close
+                    for i, col in enumerate(transfer_headers):
+                        cell_value = transfer_body[i].text.strip()
+                        if col == "Deadline":
+                            pass
 
-                for i, col in enumerate(transfer_head):
-                    cell_value = transfer_body[i].text.strip()
-                    if str(col.text) == "Deadline":
-                        dict_transfer_closure["Player_ID"] = player_id
-                        if str(cell_value) != transfer_deadline:
-                            date_transfer_x = comp.reverse_date(str(cell_value))
-                            date_transfer_dl = comp.reverse_date(transfer_deadline)
-                            if date_transfer_x > date_transfer_dl:
-                                more_recent_transfer = True
-                                next_transfer_after_deadline = True
+
+
+                        if str(col.text) == "Deadline":
+                            dict_transfer_closure["Player_ID"] = player_id
+                            if str(cell_value) != transfer_deadline:
+                                date_transfer_x = comp.reverse_date(str(cell_value))
+                                date_transfer_dl = comp.reverse_date(transfer_deadline)
+                                if date_transfer_x > date_transfer_dl:
+                                    more_recent_transfer = True
+                                    next_transfer_after_deadline = True
+                                else:
+                                    next_transfer_after_deadline = False
+                                if j + 1 == len(transfer_rows):
+                                    transfer_aborted = True  # last transfer, not matching date, transfer was aborted
+                                    dict_transfer_closure["Transfer_Status"] = "Aborted"
                             else:
-                                next_transfer_after_deadline = False
-                            if j + 1 == len(transfer_rows):
-                                transfer_aborted = True  # last transfer, not matching date, transfer was aborted
-                                dict_transfer_closure["Transfer_Status"] = "Aborted"
-                        else:
-                            transfer_completed = True
-                            dict_transfer_closure["Transfer_Status"] = "Completed"
-                    elif str(col.text) == "Seller":
-                        seller_href = transfer_body[i].div.a.get("href")
-                        new_seller_name = str(cell_value)
-                        new_seller_id = int(seller_href.split("=")[1])
-                        new_seller_href = str(seller_href)
-                        if not transfer_aborted:
-                            if next_transfer_after_deadline:
-                                dict_transfer_closure["Buyer_Name"] = old_seller_name
-                                dict_transfer_closure["Buyer_ID"] = old_seller_id
-                                dict_transfer_closure["Buyer_Href"] = old_seller_href
-                            else:
-                                dict_transfer_closure["Buyer_Name"] = owner_name
-                                dict_transfer_closure["Buyer_ID"] = owner_id
-                                dict_transfer_closure["Buyer_Href"] = owner_href
-                            dict_transfer_closure["Seller_Name"] = new_seller_name
-                            dict_transfer_closure["Seller_ID"] = new_seller_id
-                            dict_transfer_closure["Seller_Href"] = new_seller_href
-                        else:
-                            dict_transfer_closure["Buyer_Name"] = None
-                            dict_transfer_closure["Buyer_ID"] = None
-                            dict_transfer_closure["Buyer_Href"] = None
-                            if more_recent_transfer:
+                                transfer_completed = True
+                                dict_transfer_closure["Transfer_Status"] = "Completed"
+                        elif str(col.text) == "Seller":
+                            seller_href = transfer_body[i].div.a.get("href")
+                            new_seller_name = str(cell_value)
+                            new_seller_id = int(seller_href.split("=")[1])
+                            new_seller_href = str(seller_href)
+                            if not transfer_aborted:
                                 if next_transfer_after_deadline:
-                                    dict_transfer_closure["Seller_Name"] = new_seller_name
-                                    dict_transfer_closure["Seller_ID"] = new_seller_id
-                                    dict_transfer_closure["Seller_Href"] = new_seller_href
+                                    dict_transfer_closure["Buyer_Name"] = old_seller_name
+                                    dict_transfer_closure["Buyer_ID"] = old_seller_id
+                                    dict_transfer_closure["Buyer_Href"] = old_seller_href
+                                else:
+                                    dict_transfer_closure["Buyer_Name"] = owner_name
+                                    dict_transfer_closure["Buyer_ID"] = owner_id
+                                    dict_transfer_closure["Buyer_Href"] = owner_href
+                                dict_transfer_closure["Seller_Name"] = new_seller_name
+                                dict_transfer_closure["Seller_ID"] = new_seller_id
+                                dict_transfer_closure["Seller_Href"] = new_seller_href
                             else:
-                                dict_transfer_closure["Seller_Name"] = owner_name
-                                dict_transfer_closure["Seller_ID"] = owner_id
-                                dict_transfer_closure["Seller_Href"] = owner_href
+                                dict_transfer_closure["Buyer_Name"] = None
+                                dict_transfer_closure["Buyer_ID"] = None
+                                dict_transfer_closure["Buyer_Href"] = None
+                                if more_recent_transfer:
+                                    if next_transfer_after_deadline:
+                                        dict_transfer_closure["Seller_Name"] = new_seller_name
+                                        dict_transfer_closure["Seller_ID"] = new_seller_id
+                                        dict_transfer_closure["Seller_Href"] = new_seller_href
+                                else:
+                                    dict_transfer_closure["Seller_Name"] = owner_name
+                                    dict_transfer_closure["Seller_ID"] = owner_id
+                                    dict_transfer_closure["Seller_Href"] = owner_href
 
-                    elif str(col.text) == "TSI":
-                        if not transfer_aborted:
-                            dict_transfer_closure[str(col.text)] = int(cell_value.replace("\xa0", ""))
-                    elif str(col.text) == "Age":
-                        if not transfer_aborted:
-                            age_str = cell_value.split("(")[0]
-                            days_str = cell_value.split("(")[1].split(")")[0]
-                            dict_transfer_closure[str(col.text)] = int(age_str)
-                            dict_transfer_closure["Days"] = int(days_str)
-                    elif str(col.text) == "Price":
-                        if not transfer_aborted:
-                            cell_value = cell_value.split("€")[0]
-                            dict_transfer_closure["Price_Euros"] = int(cell_value.replace("\xa0", ""))
+                        elif str(col.text) == "TSI":
+                            if not transfer_aborted:
+                                dict_transfer_closure[str(col.text)] = int(cell_value.replace("\xa0", ""))
+                        elif str(col.text) == "Age":
+                            if not transfer_aborted:
+                                age_str = cell_value.split("(")[0]
+                                days_str = cell_value.split("(")[1].split(")")[0]
+                                dict_transfer_closure[str(col.text)] = int(age_str)
+                                dict_transfer_closure["Days"] = int(days_str)
+                        elif str(col.text) == "Price":
+                            if not transfer_aborted:
+                                cell_value = cell_value.split("€")[0]
+                                dict_transfer_closure["Price_Euros"] = int(cell_value.replace("\xa0", ""))
+                            else:
+                                dict_transfer_closure["Price_Euros"] = None
                         else:
-                            dict_transfer_closure["Price_Euros"] = None
-                    else:
-                        pass
+                            pass
 
-                old_seller_name = new_seller_name
-                old_seller_id = new_seller_id
-                old_seller_href = new_seller_href
+                    old_seller_name = new_seller_name
+                    old_seller_id = new_seller_id
+                    old_seller_href = new_seller_href
 
-                if transfer_completed:
-                    break
+                    if transfer_completed:
+                        break
 
-                j += 1
+                    j += 1
         else:
             dict_transfer_closure["Player_ID"] = player_id
             dict_transfer_closure["Transfer_Status"] = "Aborted"
