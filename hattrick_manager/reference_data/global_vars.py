@@ -14,7 +14,7 @@ with open(os.path.join(ref_dir, 'navigation_map.json')) as f:
 
 # Extracting htlm keys:
 with open(os.path.join(ref_dir, 'html_keys.json')) as f:
-    htmlk = json.load(f)
+    html_keys = json.load(f)
 
 # Extracting team table info:
 with open(os.path.join(ref_dir, 'team_table.json')) as f:
@@ -54,4 +54,24 @@ transfer_dict_init = {
             "Max": 17,
         },
     },
+}
+
+# Transfer closure dictionary:
+dict_transfer_closure_init = {
+    "Player_ID": None,
+    "Gentleness": None,
+    "Aggressiveness": None,
+    "Honesty": None,
+    "Transfer_Status": None,
+    "Transfer_Date": None,
+    "Seller_Name": None,
+    "Seller_Href": None,
+    "Seller_ID": None,
+    "Buyer_Name": None,
+    "Buyer_Href": None,
+    "Buyer_ID": None,
+    "TSI": None,
+    "Age": None,
+    "Days": None,
+    "Price": None
 }

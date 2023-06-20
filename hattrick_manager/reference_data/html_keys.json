@@ -18,6 +18,18 @@
         "skill_root": "ctl00_ctl00_CPContent_CPMain_ddlSkill",
         "search_icon": "ctl00_ctl00_CPContent_CPMain_butSearch",
         "no_transfer_id": "ctl00_ctl00_CPContent_CPMain_lblNoTransfers",
-        "main_wrapper": "ctl00_ctl00_CPContent_mainWrapper"
+        "main_wrapper": "ctl00_ctl00_CPContent_mainWrapper",
+        "search_drop_menu": "ctl00_ctl00_CPContent_CPMain_ddlCategory",
+        "player_id_box": "ctl00_ctl00_CPContent_CPMain_txtSearchPlayerID",
+        "search_res_table": "ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00",
+        "player_link": "ctl00_ctl00_CPContent_CPMain_grdPlayers_ctl00_ctl04_lnkPlayer"
+    },
+    "xpath": {
+        "search_icon": "//*[@id='shortcutsNoSupporter']/div/a[1]/img",
+        "search_player_button": "//*[@id='ctl00_ctl00_CPContent_CPMain_btnSearchPlayers']",
+        "transfer_history_tab": "//*[@id='ctl00_ctl00_CPContent_CPMain_btnViewTransferHistory']",
+        "player_gentleness": "//*[@id='mainBody']/p/a[1]",
+        "player_aggressiveness": "//*[@id='mainBody']/p/a[2]",
+        "player_honesty": "//*[@id='mainBody']/p/a[3]"
     }
 }
