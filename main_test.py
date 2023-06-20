@@ -58,6 +58,7 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
     player_exists = True
     empty_transfer_history = False
     only_older_transfers = False
+    num_more_recent_transfers = 0
 
     """Navigating through the search menu to find transferred player"""
     # Click on the hattrick search icon:
@@ -154,6 +155,15 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
                             transfer_closed = True
                         else:
                             pass
+                elif datetime.strptime(transfer_date, "%d-%m-%Y") > datetime.strptime(transfer_deadline, "%d-%m-%Y"):
+                    for i, col in enumerate(transfer_headers):  # iterating over the transfer history columns
+                        cell_value = transfer_body[i]
+                        if col == "Seller":
+                            latest_seller_name = cell_value.text.strip()
+                            latest_seller_href = cell_value.a.get("href")
+                            latest_seller_id = int(cell_value.a.get("href").split("TeamID=")[-1])
+                            break
+                    num_more_recent_transfers += 1
                 if datetime.strptime(transfer_date, "%d-%m-%Y") < datetime.strptime(transfer_deadline, "%d-%m-%Y"):
                     """Since the transfer history is ordered chronologically, if the transfer date for the current row
                     is older than the given transfer deadline, no need to look at older transfers, the studied
@@ -178,6 +188,12 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
                 dict_transfer_closure["Seller_Name"] = owner_name
                 dict_transfer_closure["Seller_Href"] = owner_href
                 dict_transfer_closure["Seller_ID"] = owner_id
+            """In the case where there are more recent transfers in the transfer history, then the seller of the aborted
+            transfer can be known, it is the seller of the next most recent transfer to the one studied."""
+            if num_more_recent_transfers >= 1:
+                dict_transfer_closure["Seller_Name"] = latest_seller_name
+                dict_transfer_closure["Seller_Href"] = latest_seller_href
+                dict_transfer_closure["Seller_ID"] = latest_seller_id
 
     else:  # the player retired
         dict_transfer_closure["Player_ID"] = player_id
