@@ -57,8 +57,9 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
     transfer_closed = False
     player_exists = True
     empty_transfer_history = False
+    only_older_transfers = False
 
-    """Navigating through the search menu to find transfered player"""
+    """Navigating through the search menu to find transferred player"""
     # Click on the hattrick search icon:
     nav.wait("xpath", html_keys["xpath"]["search_icon"], timeout, driver)
     driver.find_element_by_xpath(html_keys["xpath"]["search_icon"]).click()
@@ -81,7 +82,7 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
         player_exists = False
         print("Player with ID {} retired".format(str(player_id)))
 
-    # At this point, we know if the transfered player still exist or is retired:
+    # At this point, we know if the transferred player still exist or is retired:
     if player_exists:
         dict_transfer_closure["Player_ID"] = player_id
         time.sleep(0.1)
@@ -103,7 +104,7 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
         html_doc = driver.page_source
         soup = BeautifulSoup(html_doc, "html.parser")  # the page is parsed
         # Check if the player has some transfer history
-        transfer_history = soup.find("table", {"class":"htbox-table"})
+        transfer_history = soup.find("table", {"class": "htbox-table"})
         if transfer_history is None:
             empty_transfer_history = True
 
@@ -157,6 +158,8 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
                     """Since the transfer history is ordered chronologically, if the transfer date for the current row
                     is older than the given transfer deadline, no need to look at older transfers, the studied
                     transfer has been aborted."""
+                    if j == 0:  # special case where there are only older transfers in the transfer history:
+                        only_older_transfers = True
                     break
                 if transfer_closed:  # the transfer has already been found, no need to search any further
                     break
@@ -168,9 +171,10 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
 
         if dict_transfer_closure["Transfer_Status"] == "Aborted":
             dict_transfer_closure["Transfer_Date"] = transfer_deadline.replace("-", "/")
-            """In the case where there is no transfer history for the player, we are sure that the seller of the
-            aborted transfer is the current owner of the player."""
-            if empty_transfer_history:
+            """In the case where there is no transfer history for the player, or that we only have transfer listed older
+            than the one we are trying to close, we are sure that the seller of the aborted transfer is the current 
+            owner of the player."""
+            if empty_transfer_history or only_older_transfers:
                 dict_transfer_closure["Seller_Name"] = owner_name
                 dict_transfer_closure["Seller_Href"] = owner_href
                 dict_transfer_closure["Seller_ID"] = owner_id
@@ -226,7 +230,7 @@ while not df_pre["Closed"].all(axis=0):
             player_id = row["Player_ID"]
             deadline = row["Transfer_Date"].replace("/", "-")
             dd_dt_p1 = datetime.strptime(deadline, "%d-%m-%Y") + timedelta(days=1)
-            if datetime.now() > dd_dt_p1:  # the transfer has already been closed
+            if datetime.now() > dd_dt_p1:  # the transfer has potentially already been closed
                 closed_transfer_indices.append(i_row)
                 che.check_wifi_connection()
                 try:
@@ -244,12 +248,27 @@ while not df_pre["Closed"].all(axis=0):
 
         df_pre.at[i_row, "Closed"] = True
         #df_pre.to_csv(csv_track, index=False)
-
-        df_db_addition = df_pre.merge(df_closed_transfer_data, on="Player_ID")
-        df_db_addition.drop(["Closed"], axis=1, inplace=True)
-        #df_db_addition.to_csv(csv_db, index=False)
-
         print(f"Transfer for player ID {player_id} --> CLOSED")
+
+df_closed_transfer_data = df_closed_transfer_data.fillna(value=np.nan)
+df_db_addition = df_pre.merge(df_closed_transfer_data, on=["Player_ID", "Transfer_Date"], how='left')
+if pd.Series(["TSI_x", "Age_x", "Days_x"]).isin(df_db_addition.columns).all():
+    df_db_addition['Age_Years'] = np.max(df_db_addition[['Age_x', 'Age_y']], axis=1)
+    df_db_addition['Age_Days'] = np.max(df_db_addition[['Days_x', 'Days_y']], axis=1)
+    df_db_addition['TSI'] = np.where(
+        ~df_db_addition['TSI_y'].isnull(), df_db_addition['TSI_y'], df_db_addition['TSI_x']
+    )
+    df_db_addition.drop(["Closed", "TSI_x", "TSI_y", "Age_x", "Age_y", "Days_x", "Days_y"], axis=1, inplace=True)
+df_db_addition = df_db_addition.astype({
+    'TSI': 'Int64',
+    'Age_Years': 'Int64',
+    'Age_Days': 'Int64',
+    'Price': 'Int64',
+    'Buyer_ID': 'Int64',
+    'Seller_ID': 'Int64'
+})
+print("Hello")
+df_db_addition.to_csv(os.path.join(transfer_data_dir, "df_closed_data_test.csv"), index=False)
 
 
 # if __name__ == '__main__':
