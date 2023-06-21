@@ -41,17 +41,20 @@ import hattrick_manager.checkers as che
 def launch_transfer_search(driver, t_search):
     timeout = 2
     sleep_time = 3  # not needed with great internet connection
+    nap_time = 0.1
     max_disp_transfers = 101  # hard coded hattrick logic
     transfer_icon = '//*[@id="shortcutsNoSupporter"]/div/a[4]/img'
     clear_icon = '//*[@id="mainBody"]/table[1]/tbody/tr[7]/td[2]/a[2]'
-    ids = glova.htmlk['id']
+    ids = glova.html_keys['id']
 
     time.sleep(sleep_time)
     try:
         che.check_wifi_connection()
+        time.sleep(nap_time)
         nav.wait('xpath', transfer_icon, timeout, driver)
         driver.find_element_by_xpath(transfer_icon).click()  # go to the transfer menu
         nav.wait('id', ids['years_min_menu'], timeout, driver)
+        time.sleep(nap_time)
     except TimeoutException:
         driver.quit()
     except nav.NoInternetException:
@@ -59,14 +62,19 @@ def launch_transfer_search(driver, t_search):
     time.sleep(sleep_time)
 
     # Select age transfer options:
+    time.sleep(nap_time)
     drop = Select(driver.find_element_by_id(ids['years_min_menu']))
     drop.select_by_value(str(t_search['Age']['Years']['Min']))
+    time.sleep(nap_time)
     drop = Select(driver.find_element_by_id(ids['years_max_menu']))
     drop.select_by_value(str(t_search['Age']['Years']['Max']))
+    time.sleep(nap_time)
     drop = Select(driver.find_element_by_id(ids['days_min_menu']))
     drop.select_by_value(str(t_search['Age']['Days']['Min']))
+    time.sleep(nap_time)
     drop = Select(driver.find_element_by_id(ids['days_max_menu']))
     drop.select_by_value(str(t_search['Age']['Days']['Max']))
+    time.sleep(nap_time)
 
     # Select skill transfer options:
     for i, skill_val in enumerate(t_search['Skills'].values()):
@@ -74,17 +82,23 @@ def launch_transfer_search(driver, t_search):
         skill_min_id = ids['skill_root'] + str(i+1) + 'Min'
         skill_max_id = ids['skill_root'] + str(i+1) + 'Max'
         if skill_val['Name'] is not None:
+            time.sleep(nap_time)
             drop = Select(driver.find_element_by_id(skill_name_id))
             drop.select_by_visible_text(skill_val['Name'])
+            time.sleep(nap_time)
             drop = Select(driver.find_element_by_id(skill_min_id))
             drop.select_by_value(str(skill_val['Min']))
+            time.sleep(nap_time)
             drop = Select(driver.find_element_by_id(skill_max_id))
             drop.select_by_value(str(skill_val['Max']))
+            time.sleep(nap_time)
         else:
             drop = Select(driver.find_element_by_id(skill_name_id))
             drop.select_by_value('-1')
+            time.sleep(nap_time)
 
     driver.find_element_by_xpath(clear_icon).click()  # clear any specialty
+    time.sleep(nap_time)
     driver.find_element_by_id(ids['search_icon']).click()  # launch the search
     time.sleep(sleep_time)
 
@@ -97,6 +111,7 @@ def launch_transfer_search(driver, t_search):
         page_number = 0
         transfer_number = 0
     else:
+        time.sleep(nap_time)
         number_transfers = driver.find_element_by_class_name('PagerRight_Default')
         split_list = number_transfers.text.split('of')
         page_number = int(split_list[1].split(',')[0].strip())
@@ -194,6 +209,7 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
     df_open_transfer_data = pd.DataFrame()  # the DataFrame that will group all the transfer data results for the given skill
     transfer_page_id = "ctl00_ctl00_CPContent_CPMain_ucPager_repPages_ctl0"
     timeout = 3
+    nap_time = 0.1
     break_it = False
 
     # Logger:
@@ -257,13 +273,14 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
 
                 while not current_query_data_collected:
                     che.check_wifi_connection()
-
+                    time.sleep(nap_time)
                     # 4) Go to that page using the htlm id key
                     try:
                         if next_page_to_scrap > 1:
                             xtransfer_page_id = transfer_page_id + str(next_page_to_scrap - 1) + \
                                                 "_p" + str(next_page_to_scrap - 1)
                             nav.wait("id", xtransfer_page_id, timeout, driver)
+                            time.sleep(nap_time)
                             driver.find_element_by_id(xtransfer_page_id).click()
                     except TimeoutException:
                         print("\nProcess {} restarting".format(str(split_index)))
@@ -281,6 +298,7 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
                     # 5) Collect page transfer data
                     try:
                         che.check_wifi_connection()
+                        time.sleep(nap_time)
                         df_page_transfer = read.collect_1p_transfer_search_data(driver)
                     except TimeoutException:
                         print("\nProcess {} restarting".format(str(split_index)))

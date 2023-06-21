@@ -361,33 +361,37 @@ def collect_team_data() -> pd.DataFrame:
 def collect_1p_transfer_search_data(driver) -> dict:
     no_transfer_id = 'ctl00_ctl00_CPContent_CPMain_lblNoTransfers'
     timeout = 3
+    long_nap_time = 0.5
+    nap_time = 0.1
+
     WebDriverWait(driver, timeout).until(ec.presence_of_element_located((By.ID, "ctl00_ctl00_CPContent_divStartMain")))
-    # print("Page loaded\n")
-    time.sleep(0.5)
+    time.sleep(long_nap_time)
     no_transfer_found = che.check_exists_by_id(no_transfer_id, driver)
+    time.sleep(nap_time)
 
     if no_transfer_found:
         df_transfers = pd.DataFrame()
     else:
-        htmlDoc = driver.page_source
-        soup = BeautifulSoup(htmlDoc, "html.parser")  # the page is parsed
-        playerTable = soup.find("table", attrs={"class": "tablesorter indent"})
-        playerTableHeadings = playerTable.thead.find_all("tr")  # contains 2 rows
-        playerTableData = playerTable.tbody.find_all("tr")  # contains 2 rows
+        html_doc = driver.page_source
+        soup = BeautifulSoup(html_doc, "html.parser")  # the page is parsed
+        time.sleep(nap_time)
+        player_table = soup.find("table", attrs={"class": "tablesorter indent"})
+        player_table_headings = player_table.thead.find_all("tr")  # contains 2 rows
+        player_table_data = player_table.tbody.find_all("tr")  # contains 2 rows
 
         # Get all the headings of Lists
         headings = []
         data = []
-        for th in playerTableHeadings[0].find_all("th"):
+        for th in player_table_headings[0].find_all("th"):
             heading = str(th.get('title'))
             headings.append(heading.strip())
         headings = headings[:-1]
 
         # Get all the player data (the one found in the .csv)
-        for tr in playerTableData:
+        for tr in player_table_data:
             t_row = {}
             for td, th in zip(tr.find_all("td"), headings):
-                cellValue = td.text.replace('\n', '').strip()
+                cell_value = td.text.replace('\n', '').strip()
                 if th == "Nationality":
                     t_row[th] = td.a.img.get('title')
                 elif th == "Name":
@@ -396,7 +400,7 @@ def collect_1p_transfer_search_data(driver) -> dict:
                     t_row["Player_ID"] = int(player_id)
                     t_row[th] = td.get("data-fullname")
                 elif th == "Coach":
-                    t_row[th] = "Yes" if cellValue else "No"
+                    t_row[th] = "Yes" if cell_value else "No"
                 elif th == "Specialty":
                     spe = td.get("data-sortvalue")
                     if not spe:
@@ -424,7 +428,7 @@ def collect_1p_transfer_search_data(driver) -> dict:
                     elif int(injury) == 6:
                         t_row[th] = "Injured (4)"
                     else:
-                        t_row[th] = "Healthy"
+                        t_row[th] = "Injured (4+)"
                         # injury_length = td.i.get("data-injury-length")
                         # t_row[th] = "Injured (" + injury_length + ")"
                 elif th == "Warnings":
@@ -456,7 +460,7 @@ def collect_1p_transfer_search_data(driver) -> dict:
                         bid = int(bid * 0.1)
                     t_row[th] = bid
                 elif th == "Deadline":
-                    date_time = cellValue.split(" ")
+                    date_time = cell_value.split(" ")
                     date = str(date_time[0])
                     timez = str(date_time[1])
                     t_row["Transfer_Date"] = date
@@ -468,9 +472,9 @@ def collect_1p_transfer_search_data(driver) -> dict:
                     t_row["Transfer_ID"] = player_id + "_" + date  # unique transfer ID
                 elif th == "Weeks in club" or th == "Set Pieces":
                     clean_th = clean_name(th)
-                    t_row[clean_th] = int(cellValue) if cellValue else None
+                    t_row[clean_th] = int(cell_value) if cell_value else None
                 else:
-                    t_row[th] = int(cellValue) if cellValue else None
+                    t_row[th] = int(cell_value) if cell_value else None
             data.append(t_row)
 
         df_transfers = pd.DataFrame(data)

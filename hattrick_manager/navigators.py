@@ -102,9 +102,13 @@ def launch_web_browser() -> webdriver:
     driver.set_page_load_timeout(timeout)
 
     user_name = driver.find_element_by_name(glova.html_keys['name']['username'])
+    time.sleep(0.5)
     user_name.send_keys(glova.login_info['username'])
+    time.sleep(0.5)
     user_pwd = driver.find_element_by_name(glova.html_keys['name']['password'])
+    time.sleep(0.5)
     user_pwd.send_keys(glova.login_info['pwd'])
+    time.sleep(0.5)
     user_name.send_keys(Keys.RETURN)
     time.sleep(sleep_duration)
 
