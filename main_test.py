@@ -48,6 +48,7 @@ https://sites.google.com/chromium.org/driver/
 # df_top_scorers = visu.display_top_scorers()
 
 
+### START OF TEST FOR CLOSING TRANSFER SEARCH ###
 def get_transfer_closure(player_id, transfer_deadline, driver):
     # Initialization of parameters:
     timeout = 2
@@ -164,6 +165,9 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
                             latest_seller_id = int(cell_value.a.get("href").split("TeamID=")[-1])
                             break
                     num_more_recent_transfers += 1
+                else:
+                    pass
+
                 if datetime.strptime(transfer_date, "%d-%m-%Y") < datetime.strptime(transfer_deadline, "%d-%m-%Y"):
                     """Since the transfer history is ordered chronologically, if the transfer date for the current row
                     is older than the given transfer deadline, no need to look at older transfers, the studied
@@ -171,8 +175,10 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
                     if j == 0:  # special case where there are only older transfers in the transfer history:
                         only_older_transfers = True
                     break
+
                 if transfer_closed:  # the transfer has already been found, no need to search any further
                     break
+
             if not transfer_closed:  # this means that the transfer was not found in the transfer history
                 dict_transfer_closure["Transfer_Status"] = "Aborted"
 
@@ -286,6 +292,204 @@ df_db_addition = df_db_addition.astype({
 print("Hello")
 df_db_addition.to_csv(os.path.join(transfer_data_dir, "df_closed_data_test.csv"), index=False)
 
+### END OF TEST FOR CLOSING TRANSFER SEARCH ###
+
+
+
+# ### ALL INCLUSIVE TEST FOR OPEN TRANSFER SEARCH ###
+# ref_data_dir = os.path.join(hatman.__path__[0], 'reference_data')
+# out_dir = os.path.join(hatman.__path__[0], 'output', 'transfer_data')
+# log_dir = os.path.join(hatman.__path__[0], 'log')
+# search_patterns_dir = os.path.join(hatman.__path__[0], 'reference_data', 'transfer_search_patterns')
+# f = open(os.path.join(ref_data_dir, 'login_info.json'))
+# launch_info = json.load(f)
+# skill = "keeper"
+# csv_track = skill + "_transfer_tracker.csv"
+# csv_db = skill + "_transfer_data.csv"
+# split_index = 0
+# n_procs = 1
+#
+# if not os.path.isfile(os.path.join(search_patterns_dir, csv_track)):
+#     df_transfer_tracker = read.get_search_pattern(skill, transfer_tracker=True)
+# else:
+#     df_transfer_tracker = pd.read_csv(os.path.join(search_patterns_dir, csv_track), index_col=False)
+#
+# # Beginning of function
+# df_transfer_tracker.reset_index(drop=True, inplace=True)
+# skill_cap = skill.capitalize()
+# csv_name = skill + "_transfer_tracker_" + str(split_index) + ".csv"
+# csv_db = skill + "_transfer_data_" + str(split_index) + ".csv"
+# df_open_transfer_data = pd.DataFrame()  # the DataFrame that will group all the transfer data results for the given skill
+# transfer_page_id = "ctl00_ctl00_CPContent_CPMain_ucPager_repPages_ctl0"
+# timeout = 3
+# nap_time = 0.1
+# break_it = False
+#
+# # Logger:
+# log_name = "open_transfer_log"
+# # Now we will  configure the logger
+# log_file_path = os.path.join(log_dir, f"{log_name}_{split_index}.log")
+#
+# while not df_transfer_tracker["researched"].all(axis=0):
+#     # 1) Get the transfer dictionary for the current transfer query and launch the query
+#     che.check_wifi_connection()
+#     driver = nav.launch_web_browser()
+#     try:
+#         time_dict_ref = read.get_hattrick_date(driver, time_ref_dict=None, transfer_deadline=None)
+#     except TimeoutException:
+#         print("\nProcess {} restarting".format(str(split_index)))
+#         with open(log_file_path, "a+") as f:
+#             f.write("TimeoutException getting hattrick date. Process {} restarting\n".format(str(split_index)))
+#         driver.quit()
+#     except nav.NoInternetException:
+#         sys.exit(0, "Reconnect to Wifi before launching script again.")
+#
+#     for i_row, row in df_transfer_tracker.iterrows():
+#         if break_it:
+#             break_it = False
+#             break
+#         current_query_data_collected = row["researched"]
+#         if not current_query_data_collected:
+#             transfer_dict = copy.deepcopy(glova.transfer_dict_init)  # intialize search dictionary
+#             transfer_dict["Age"]["Years"]["Min"] = row["min_year"]
+#             transfer_dict["Age"]["Years"]["Max"] = row["max_year"]
+#             transfer_dict["Age"]["Days"]["Min"] = row["min_days"]
+#             transfer_dict["Age"]["Days"]["Max"] = row["max_days"]
+#             transfer_dict["Skills"]["Skill_1"]["Name"] = skill_cap
+#             transfer_dict["Skills"]["Skill_1"]["Min"] = row["section_min"]
+#             transfer_dict["Skills"]["Skill_1"]["Max"] = row["section_max"]
+#             try:
+#                 n_pages, n_results = rap.launch_transfer_search(driver, transfer_dict)
+#             except TimeoutException:
+#                 print(
+#                     "\nTimeoutException launching transfer search. Process {} restarting".format(str(split_index)))
+#                 with open(log_file_path, "a+") as f:
+#                     f.write(
+#                         "TimeoutException launching transfer search. Process {} restarting"
+#                         "\n".format(str(split_index))
+#                     )
+#                 driver.quit()
+#                 break
+#
+#             except nav.NoInternetException:
+#                 sys.exit(0, "Reconnect to Wifi before launching script again.")
+#
+#             # 2) Write the number of results found in tracking csv
+#             df_transfer_tracker.at[i_row, "n_results"] = n_results
+#
+#             # 3) Establish the next page (1, 2, 3 or 4) that needs to be scrapped
+#             # A function that looks at columns page1_collected, page2_collected...
+#             # in the transfer tracker needs to be created to get this page.
+#             next_page_to_scrap = read.get_next_page_to_scrap(row)  # 3 for example
+#
+#             while not current_query_data_collected:
+#                 che.check_wifi_connection()
+#                 time.sleep(nap_time)
+#                 # 4) Go to that page using the htlm id key
+#                 try:
+#                     if next_page_to_scrap > 1:
+#                         xtransfer_page_id = transfer_page_id + str(next_page_to_scrap - 1) + \
+#                                             "_p" + str(next_page_to_scrap - 1)
+#                         nav.wait("id", xtransfer_page_id, timeout, driver)
+#                         time.sleep(nap_time)
+#                         driver.find_element_by_id(xtransfer_page_id).click()
+#                 except TimeoutException:
+#                     print("\nProcess {} restarting".format(str(split_index)))
+#                     with open(log_file_path, "a+") as f:
+#                         f.write(
+#                             "TimeoutException finding transfer page. Process {} restarting"
+#                             "\n".format(str(split_index))
+#                         )
+#                     break_it = True
+#                     driver.quit()
+#                     break
+#                 except nav.NoInternetException:
+#                     sys.exit(0, "Reconnect to Wifi before launching script again.")
+#
+#                 # 5) Collect page transfer data
+#                 try:
+#                     che.check_wifi_connection()
+#                     time.sleep(nap_time)
+#                     df_page_transfer = read.collect_1p_transfer_search_data(driver)
+#                 except TimeoutException:
+#                     print("\nProcess {} restarting".format(str(split_index)))
+#                     with open(log_file_path, "a+") as f:
+#                         f.write(
+#                             "TimeoutException collecting page data transfer. Process {} restarting\n".format(
+#                                 str(split_index))
+#                         )
+#                     break_it = True
+#                     driver.quit()
+#                     break
+#                 except nav.NoInternetException:
+#                     sys.exit(0, "Reconnect to Wifi before launching script again.")
+#
+#                 # 6) Add transfer ID, Hattrick Dates
+#                 if not df_page_transfer.empty:
+#                     df_page_transfer["Unique_Transfer_Key"] = ""
+#                     df_page_transfer["Searched_Skill_Name"] = ""
+#                     df_page_transfer["Searched_Age_Range"] = ""
+#                     df_page_transfer["Searched_Skill_Range"] = ""
+#                     df_page_transfer["Number_Search_Results"] = 0
+#
+#                     for i, row2 in df_page_transfer.iterrows():
+#                         run_dict = row2.to_dict()
+#                         keys_to_keep = ["Nationality", "Transfer_ID", "Speciality", "Transfer_Time"]
+#                         run_dict2 = {k: v for k, v in run_dict.items() if k not in keys_to_keep}
+#                         df_page_transfer.at[i, "Unique_Transfer_Key"] = str(
+#                             comp.generate_transfer_key(run_dict2))
+#                         df_page_transfer.at[i, "Search_Date"] = time_dict_ref["launch_time"]["date"]
+#                         time_dict = read.get_hattrick_date(driver, time_ref_dict=time_dict_ref,
+#                                                            transfer_deadline=df_page_transfer.at[
+#                                                                i, "Transfer_Date"])
+#                         df_page_transfer.at[i, "Transfer_Date_Day"] = time_dict["transfer_time"]["day_name"]
+#                         df_page_transfer.at[i, "Transfer_Date_Week"] = time_dict["transfer_time"][
+#                             "week"]  # TODO: Fix Hattrick Week
+#                         df_page_transfer.at[i, "Transfer_Date_Season"] = time_dict["transfer_time"]["season"]
+#
+#                         # 7) Add this DF to the df_open_transfer_data DF. Keep unique transfer player ID
+#                         df_page_transfer.at[i, "Searched_Skill_Name"] = skill
+#                         df_page_transfer.at[i, "Searched_Age_Range"] = \
+#                             str(transfer_dict["Age"]["Years"]["Min"]) + "." + \
+#                             str(transfer_dict["Age"]["Days"]["Min"]).zfill(3) + "_" + \
+#                             str(transfer_dict["Age"]["Years"]["Max"]) + "." + \
+#                             str(transfer_dict["Age"]["Days"]["Max"]).zfill(3)
+#                         df_page_transfer.at[i, "Searched_Skill_Range"] = \
+#                             str(transfer_dict["Skills"]["Skill_1"]["Min"]) + "_" + \
+#                             str(transfer_dict["Skills"]["Skill_1"]["Max"])
+#                         df_page_transfer.at[i, "Number_Search_Results"] = n_results
+#
+#                 # 8) Add this DF to the df_open_transfer_data DF. Keep unique transfer player ID
+#                 if not df_page_transfer.empty:
+#                     df_open_transfer_data = pd.concat([df_open_transfer_data, df_page_transfer], sort=False,
+#                                                       ignore_index=True)
+#                 df_open_transfer_data.drop_duplicates(subset="Unique_Transfer_Key", inplace=True)
+#
+#                 # 9) Write the df_open_transfer_data to update the csv
+#                 df_open_transfer_data.to_csv(os.path.join(out_dir, csv_db), index=False)
+#
+#                 # 10) Update the df_transfer_tracker to say that the page has been searched
+#                 df_transfer_tracker.at[i_row, "searched_p" + str(next_page_to_scrap)] = True
+#
+#                 # 11) Establish if all pages have been searched for this transfer query
+#                 current_query_data_collected = che.check_search_status(df_transfer_tracker, i_row, n_pages)
+#                 if current_query_data_collected:
+#                     df_transfer_tracker.at[i_row, "researched"] = True
+#                 df_transfer_tracker.to_csv(os.path.join(out_dir, csv_name), index=False)
+#
+#                 # 12) Increment of the next page to search
+#                 next_page_to_scrap += 1
+#
+#             # Print to log
+#             with open(log_file_path, "a+") as f:
+#                 f.write(
+#                     f"Open data collection. Skill: {skill} / Index: {split_index} out of {n_procs} / Transfer "
+#                     f"Search no. {str(i_row + 1).zfill(3)} out of {str(df_transfer_tracker.shape[0]).zfill(3)} "
+#                     f"--> COMPLETE\n"
+#                 )
+#
+#     driver.quit()
+# ### END OF ALL INCLUSIVE TEST FOR OPEN TRANSFER SEARCH ###
 
 # if __name__ == '__main__':
 #     print(f"Launching transfer scrapping with {str(procs)} processor(s)...\n")

@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
-import hattrick_manager as hatman
-import hattrick_manager.readers as read
-import hattrick_manager.visualizers as visu
-import hattrick_manager.computers_old as comp
-import hattrick_manager.scrappers as rap
 import numpy as np
 import pandas as pd
 from multiprocessing import Pool
 from itertools import repeat
+from selenium.common.exceptions import TimeoutException
 
-import os
-import time
 import json
+import time
+import copy
+import sys
+import os
+import pandas as pd
+
+import hattrick_manager as hatman
+import hattrick_manager.reference_data.global_vars as glova
+import hattrick_manager.scrappers as rap
+import hattrick_manager.navigators as nav
+import hattrick_manager.computers as comp
+import hattrick_manager.readers as read
+import hattrick_manager.checkers as che
 
 '''
 How to update the Chrome Driver:
@@ -35,58 +42,8 @@ timeout = 2
 if __name__ == '__main__':
     print(f"Launching transfer scrapping with {str(procs)} processor(s)...\n")
     start = time.perf_counter()
-    df_open_transfer_data = rap.scrap_transfer_market(launch_info, "playmaking", n_procs=procs)
+    df_open_transfer_data = rap.scrap_transfer_market(launch_info, "keeper", n_procs=procs)
     # df_closed_transfer_data = rap.enrich_transfer_database(launch_info, "playmaking", n_procs=procs)
     end = time.perf_counter()
     print(f"\nFinished in {round(end-start, 2)} second(s)")
 
-
-# skill = 'playmaking'
-# df_skill_search_cases = read.get_search_pattern(skill, transfer_tracker=False)
-#
-# # 0a) We start be defining or retrieving the transfer tracker for the given skill
-# # This csv file is a bit different than the one used for the search pattern determination
-# # It has more columns and tracks also the pages that were searched for each transfer query
-# csv_track = skill + "_transfer_tracker.csv"
-# csv_db = skill + "_transfer_data.csv"
-#
-# if not os.path.isfile(csv_track):
-#     df_transfer_tracker = read.get_search_pattern(skill, transfer_tracker=True)
-# else:
-#     df_transfer_tracker = pd.read_csv(csv_track, index_col=False)
-#
-# # 0b) The transfer tracker is split in X blocks depending on the number of processors required
-# # Note that the script does not use multi-threading, it uses multi-processing
-# # https://blog.alexoglou.com/multithreading-or-multiprocessing-selenium-with-python/
-# # https://stackoverflow.com/questions/53475578/python-selenium-multiprocessing
-# # https://medium.com/geekculture/introduction-to-selenium-and-python-multi-threading-module-aa5b1c4386cb
-# df_split = np.array_split(df_transfer_tracker, n_procs)
-# split_index = np.arange(0, n_procs, 1)
-#
-# # 0c) Launch the pool of processes, with headless drivers
-# # The below will probably be part of another function as all of this has to be performed per process
-# # Everything now is per processor.
-# scrap_transfer_inputs = zip(df_split, split_index, repeat(launch_info), repeat(skill))
-# pool = Pool(n_procs)
-# df_open_transfer_data = pd.concat(pool.map(scrap_transfer_market_per_process, scrap_transfer_inputs))
-# pool.close()
-# pool.join()
-#
-# # Clean the folder, combine results
-# df_open_transfer_data.drop_duplicates(subset="Unique_Transfer_Key", inplace=True)
-# df_open_transfer_data.reset_index(drop=True, inplace=True)
-# df_open_transfer_data["Closed"] = False
-# df_open_transfer_data.to_csv(csv_db, index=False)
-#
-# df_transfer_tracker_final = pd.DataFrame()
-# for i in split_index:
-#     csv_track_i = csv_track.split(".")[0] + "_" + str(i) + ".csv"
-#     csv_db_i = csv_db.split(".")[0] + "_" + str(i) + ".csv"
-#     df_csv_track_i = pd.read_csv(csv_track_i, index_col=False)
-#     df_transfer_tracker_final = pd.concat([df_transfer_tracker_final, df_csv_track_i],
-#                                           sort=False, ignore_index=True)
-#     os.remove(csv_db_i)
-#     os.remove(csv_track_i)
-#
-# df_transfer_tracker_final.reset_index(drop=True, inplace=True)
-# df_transfer_tracker_final.to_csv(csv_track, index=False)

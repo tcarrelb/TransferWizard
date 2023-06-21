@@ -99,6 +99,9 @@ def launch_transfer_search(driver, t_search):
 
     driver.find_element_by_xpath(clear_icon).click()  # clear any specialty
     time.sleep(nap_time)
+    maxbid = driver.find_element_by_id("ctl00_ctl00_CPContent_CPMain_txtBidMax")
+    maxbid.send_keys("0")  # set no max bid limitation
+    time.sleep(nap_time)
     driver.find_element_by_id(ids['search_icon']).click()  # launch the search
     time.sleep(sleep_time)
 
@@ -136,7 +139,7 @@ def scrap_transfer_market(launch_info, skill, n_procs=1):
     csv_db = skill + "_transfer_data.csv"
 
     if not os.path.isfile(os.path.join(search_patterns_dir, csv_track)):
-        df_transfer_tracker = comp.get_search_pattern(skill, transfer_tracker=True)
+        df_transfer_tracker = read.get_search_pattern(skill, transfer_tracker=True)
     else:
         df_transfer_tracker = pd.read_csv(os.path.join(search_patterns_dir, csv_track), index_col=False)
 
