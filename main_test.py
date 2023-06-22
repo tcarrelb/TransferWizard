@@ -31,6 +31,7 @@ import hattrick_manager.navigators as nav
 import hattrick_manager.computers as comp
 import hattrick_manager.readers as read
 import hattrick_manager.checkers as che
+import hattrick_manager.reference_data.global_vars as glova
 from hattrick_manager.reference_data.global_vars import html_keys, dict_transfer_closure_init, login_info
 
 
@@ -188,7 +189,7 @@ def get_transfer_closure(player_id, transfer_deadline, driver):
         if dict_transfer_closure["Transfer_Status"] == "Aborted":
             dict_transfer_closure["Transfer_Date"] = transfer_deadline.replace("-", "/")
             """In the case where there is no transfer history for the player, or that we only have transfer listed older
-            than the one we are trying to close, we are sure that the seller of the aborted transfer is the current 
+            than the one we are trying to close, we are sure that the seller of the aborted transfer is the current
             owner of the player."""
             if empty_transfer_history or only_older_transfers:
                 dict_transfer_closure["Seller_Name"] = owner_name
@@ -291,7 +292,6 @@ df_db_addition = df_db_addition.astype({
 })
 print("Hello")
 df_db_addition.to_csv(os.path.join(transfer_data_dir, "df_closed_data_test.csv"), index=False)
-
 ### END OF TEST FOR CLOSING TRANSFER SEARCH ###
 
 
@@ -303,10 +303,10 @@ df_db_addition.to_csv(os.path.join(transfer_data_dir, "df_closed_data_test.csv")
 # search_patterns_dir = os.path.join(hatman.__path__[0], 'reference_data', 'transfer_search_patterns')
 # f = open(os.path.join(ref_data_dir, 'login_info.json'))
 # launch_info = json.load(f)
-# skill = "keeper"
+# skill = "defending"
 # csv_track = skill + "_transfer_tracker.csv"
 # csv_db = skill + "_transfer_data.csv"
-# split_index = 0
+# split_index = 1
 # n_procs = 1
 #
 # if not os.path.isfile(os.path.join(search_patterns_dir, csv_track)):
@@ -329,6 +329,16 @@ df_db_addition.to_csv(os.path.join(transfer_data_dir, "df_closed_data_test.csv")
 # log_name = "open_transfer_log"
 # # Now we will  configure the logger
 # log_file_path = os.path.join(log_dir, f"{log_name}_{split_index}.log")
+#
+# # Check if dataframes already exist:
+# df_transfer_tracker_i_path = os.path.join(out_dir, csv_name)
+# df_open_transfer_data_i_path = os.path.join(out_dir, csv_db)
+# if os.path.exists(df_transfer_tracker_i_path):
+#     df_transfer_tracker_i = pd.read_csv(df_transfer_tracker_i_path, index_col=False)
+#     df_transfer_tracker = deepcopy(df_transfer_tracker_i)
+# if os.path.exists(df_open_transfer_data_i_path):
+#     df_open_transfer_data_i = pd.read_csv(df_open_transfer_data_i_path, index_col=False)
+#     df_open_transfer_data = deepcopy(df_open_transfer_data_i)
 #
 # while not df_transfer_tracker["researched"].all(axis=0):
 #     # 1) Get the transfer dictionary for the current transfer query and launch the query

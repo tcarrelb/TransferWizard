@@ -42,8 +42,7 @@ timeout = 2
 if __name__ == '__main__':
     print(f"Launching transfer scrapping with {str(procs)} processor(s)...\n")
     start = time.perf_counter()
-    df_open_transfer_data = rap.scrap_transfer_market(launch_info, "keeper", n_procs=procs)
+    df_open_transfer_data = rap.scrap_transfer_market(launch_info, "defending", n_procs=procs)
     # df_closed_transfer_data = rap.enrich_transfer_database(launch_info, "playmaking", n_procs=procs)
     end = time.perf_counter()
     print(f"\nFinished in {round(end-start, 2)} second(s)")
-

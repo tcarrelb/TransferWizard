@@ -222,6 +222,17 @@ def scrap_transfer_market_per_process(scrap_transfer_inputs):
     # Now we will  configure the logger
     log_file_path = os.path.join(log_dir, f"{log_name}_{split_index}.log")
 
+    # Check if dataframes already exist:
+    df_transfer_tracker_i_path = os.path.join(out_dir, csv_name)
+    df_open_transfer_data_i_path = os.path.join(out_dir, csv_db)
+    if os.path.exists(df_transfer_tracker_i_path):
+        df_transfer_tracker_i = pd.read_csv(df_transfer_tracker_i_path, index_col=False)
+        df_transfer_tracker = deepcopy(df_transfer_tracker_i)
+    if os.path.exists(df_open_transfer_data_i_path):
+        df_open_transfer_data_i = pd.read_csv(df_open_transfer_data_i_path, index_col=False)
+        df_open_transfer_data = deepcopy(df_open_transfer_data_i)
+
+    # Now we can continue extracting
     while not df_transfer_tracker["researched"].all(axis=0):
         # 1) Get the transfer dictionary for the current transfer query and launch the query
         che.check_wifi_connection()
