@@ -1,32 +1,32 @@
 nationality,shirt_number,player_name,player_id,head_coach,specialty,mother_club,injury,warnings,transfer_listed,age,days,tsi,week_wage,weeks_in_club,experience,leadership,loyalty,form,stamina,keeper,defending,playmaking,winger,passing,scoring,set_pieces,last_match_date,last_match_rating,last_match_position,friendliness,aggressiveness,honesty,career_goals,goals_for_team,career_hattricks,season_series_goals,season_cup_goals
-France,1.0,Thomas Richard,457077707,No,,Yes,Healthy,,No,25.002,2,1170,1350,128,7,4,20,7,7,7,1,1,1,3,8,4,2023/06/03,4.0,GK,pleasant guy,calm,dishonest,0,0,0,0,0
-Turkey,2.0,Sedat Sağlam,438957810,No,Powerful,No,Healthy,,No,33.082,82,3220,2628,16,8,1,12,7,5,1,11,6,3,4,2,6,2023/06/07,6.0,CD,controversial person,tranquil,upright,12,0,0,0,0
-Argentina,3.0,Hernán Minoian,440234867,No,,No,Healthy,,No,33.052,52,3090,1212,36,6,7,17,7,5,1,10,5,5,8,6,4,2023/06/07,5.0,CD,pleasant guy,calm,upright,37,3,1,0,0
-Switzerland,4.0,Frédéric Viot,436467754,No,Unpredictable,No,Healthy,,No,34.062,62,1050,1248,17,9,5,12,8,5,1,10,3,7,2,5,2,2023/06/07,5.0,CD,sympathetic guy,tranquil,dishonest,36,1,0,1,0
-Poland,5.0,Maciej Szymaniec,428943983,No,,No,Healthy,,No,37.011,11,470,432,33,9,3,16,4,4,0,9,3,5,6,5,13,2023/06/07,3.0,RW,pleasant guy,temperamental,dishonest,59,6,2,1,3
-Oceania,6.0,Buster Armitage,434471607,No,Unpredictable,No,Healthy,,No,35.029,29,2060,2292,16,10,4,12,6,5,1,12,6,4,1,5,7,2023/06/07,5.0,CD,sympathetic guy,balanced,honest,36,1,1,1,0
-Argentina,7.0,Sebastián Varela,433593201,No,Unpredictable,No,Healthy,,No,36.081,81,1310,1284,16,10,4,12,5,4,0,11,1,7,6,3,9,2023/05/27,3.0,CD,sympathetic guy,temperamental,upright,37,4,1,0,4
-Croatia,8.0,Roko Sekavčnik,433872439,No,,No,Injured (1),,No,34.06,60,1030,1596,34,10,4,17,7,4,1,11,6,4,2,4,1,2023/05/20,5.0,CD,pleasant guy,calm,honest,45,2,1,0,0
-Italy,9.0,Camillo Gabelli,436567165,No,,No,Healthy,,No,34.082,82,1280,840,18,7,5,12,5,5,1,9,4,7,8,5,5,2023/06/03,3.5,CD,pleasant guy,temperamental,honest,34,3,0,3,0
-Bulgaria,10.0,Hristo Popov,444161537,No,Technical,No,Healthy,,No,36.066,66,440,840,101,8,6,20,7,3,0,5,10,1,2,2,4,2023/05/27,5.5,IM,popular guy,fiery,honest,28,14,0,0,0
-Chile,11.0,Leandro Gasti,429080476,No,,No,Healthy,,No,36.015,15,320,516,43,4,6,19,6,4,0,4,9,5,2,4,4,2023/05/31,3.0,IM,sympathetic guy,balanced,dishonest,15,2,0,0,0
-Sweden,12.0,Rasmus Danielsson,442673594,No,,No,Healthy,,No,32.073,73,5250,1656,18,5,3,12,6,6,1,8,10,6,6,5,2,2023/06/03,5.0,IM,pleasant guy,balanced,upright,16,3,0,2,0
-Poland,13.0,Jan Wasilewski,433364581,No,Unpredictable,No,Healthy,,No,35.058,58,1110,1536,69,8,4,20,7,4,1,2,11,5,6,3,4,2023/06/07,5.0,IM,controversial person,temperamental,honest,39,13,0,5,1
-Portugal,14.0,Marinho Teixeira,432010328,No,Unpredictable,No,Healthy,,No,38.003,3,70,336,102,8,4,20,5,3,0,3,8,0,4,2,6,2023/06/07,4.0,IM,popular guy,temperamental,honest,44,21,1,2,0
-France,15.0,Simon Doreau,462869041,No,Technical,No,Healthy,,No,33.002,2,720,560,42,5,6,18,5,5,1,5,8,6,3,4,4,2023/06/03,4.0,RW,sympathetic guy,calm,honest,3,2,0,0,2
-France,16.0,Daniel Ricardo Bidarra,433642538,No,,No,Healthy,,No,34.081,81,1590,2450,70,6,4,20,7,5,1,5,11,2,3,5,5,2023/06/03,5.5,IM,pleasant guy,calm,upright,18,7,0,2,0
-Belarus,17.0,Aleh Mankevich,436417650,No,,No,Healthy,,No,34.045,45,880,972,18,6,6,12,6,5,1,5,9,7,5,5,8,2023/06/07,4.5,IM,pleasant guy,calm,honest,41,0,2,0,0
-Hungary,18.0,Balázs Vincze,433888169,No,Unpredictable,No,Healthy,,No,34.097,97,3340,2328,1,13,3,4,8,6,1,7,11,10,3,3,5,2023/06/03,6.5,IM,sympathetic guy,balanced,honest,103,0,3,1,1
-Germany,19.0,Domenik Bach-Paraski,438122306,No,Head,No,Healthy,,No,32.058,58,11720,5052,1,5,6,4,2,7,1,4,11,4,12,4,5,2023/06/07,3.5,IM,pleasant guy,tranquil,upright,22,0,1,1,1
-France,20.0,Massimo Maschi,474360269,No,Head,Yes,Healthy,,No,19.06,60,12770,850,19,2,5,20,7,6,1,6,6,6,5,10,3,2023/06/03,6.5,FW,sympathetic guy,calm,honest,6,6,1,2,0
-France,21.0,Yvonnick Goblet,474596242,No,,Yes,Healthy,,No,18.07,70,4540,470,16,2,1,20,4,6,1,5,7,5,4,9,3,2023/06/03,4.0,FW,pleasant guy,temperamental,honest,2,2,0,2,0
-France,22.0,Baptiste Faroux,474677743,No,,Yes,Healthy,,No,18.084,84,3130,330,16,2,4,20,6,6,1,5,6,7,3,7,4,2023/06/07,5.0,FW,controversial person,balanced,dishonest,3,3,0,3,0
-France,23.0,Ugo Lemasson,475485900,No,Unpredictable,Yes,Healthy,,No,18.007,7,2780,810,11,2,5,20,7,5,1,4,4,2,4,9,2,2023/06/07,5.5,FW,controversial person,balanced,dishonest,5,5,0,4,1
-Italy,24.0,Gennaro Menin,469824249,No,Powerful,No,Healthy,,No,22.041,41,10120,1920,53,3,3,20,6,6,1,5,5,4,6,10,1,2023/05/27,6.0,FW,sympathetic guy,balanced,honest,4,4,0,4,0
-France,25.0,Mickaël Grosperrin,475568727,No,,Yes,Healthy,,No,17.08,80,3670,390,11,1,4,20,6,5,2,3,2,3,4,9,1,2023/06/07,5.5,FW,sympathetic guy,calm,honest,2,2,0,1,1
-France,30.0,Barthélémy Retailleau,472277271,No,,Yes,Healthy,,No,19.067,67,3600,1250,35,3,4,20,7,6,7,1,1,1,3,3,3,2023/06/07,3.5,GK,sympathetic guy,balanced,dishonest,0,0,0,0,0
-France,31.0,Andy Larrère,450311413,No,Head,Yes,Healthy,,No,32.047,47,1710,710,167,4,3,20,6,2,6,2,1,1,1,3,6,2022/05/28,2.0,GK,nasty fellow,fiery,infamous,0,0,0,0,0
-France,33.0,Franck Friot,450311416,No,,Yes,Healthy,,No,29.029,29,480,390,167,3,1,20,4,3,1,7,4,4,4,4,6,2022/10/26,3.5,CD,pleasant guy,temperamental,dishonest,3,3,0,0,0
-France,34.0,Luc Toulet,450311427,No,,Yes,Healthy,,No,32.092,92,540,310,167,5,5,20,6,4,1,4,5,7,6,5,5,2023/06/07,4.5,RW,pleasant guy,tranquil,upright,13,13,0,2,1
-Argentina,,Orestes Omar Rocha,388888136,Yes,,No,Healthy,,No,48.02,20,0,300,119,13,3,20,4,1,0,0,0,0,0,0,0,2021/04/13,3.0,LB,pleasant guy,calm,upright,40,0,1,0,0
-Iran,,Vrouir Manucharyan,407268057,No,,No,Healthy,,No,43.072,72,0,300,81,13,6,20,2,1,0,2,0,0,0,0,0,2022/02/02,5.0,RB,controversial person,tranquil,honest,52,0,0,0,0
+France,1,Gustave Le Jeune,480202611,No,Powerful,Yes,Healthy,,No,19.007,7,59360,19740,33,3,3,20,7,6,15,4,1,1,1,1,3,2024/06/29,7.0,GK,sympathetic guy,calm,upright,0,0,0,0,0
+Poland,2,Sławomir Kanarkowski,443676921,No,Unpredictable,No,Healthy,,No,33.087,87,6990,3984,3,8,1,6,6,6,0,12,4,4,6,8,8,2024/06/29,5.5,CD,nasty fellow,fiery,honest,41,1,1,0,3
+Croatia,3,Nino Rušinić,468228544,No,Unpredictable,No,Healthy,,No,31.005,5,5120,2424,3,6,4,6,5,7,1,11,7,3,4,1,4,2024/07/02,5.0,CD,popular guy,fiery,honest,3,0,0,0,0
+Germany,4,Franz Niebeling,442725801,No,,No,Recovering,,No,34.02,20,2250,2292,18,8,4,12,5,5,1,12,6,5,8,5,5,2024/07/02,4.0,CD,pleasant guy,temperamental,honest,22,3,0,1,2
+Italy,5,Alessandro Stefano Cervone,446580457,No,,No,Healthy,,No,33.041,41,1550,1176,19,7,5,13,5,5,1,10,5,5,3,4,4,2024/06/29,4.5,RB,popular guy,fiery,honest,16,1,0,0,0
+Belgium,6,Sem Knapen,445535357,No,Quick,No,Healthy,,No,33.049,49,4130,4176,18,9,5,12,5,5,1,12,4,6,4,2,3,2024/06/29,5.0,LB,sympathetic guy,calm,upright,27,2,0,0,0
+Romania,7,George Vlad,447309544,No,,No,Healthy,,No,33.019,19,1720,912,31,9,3,16,8,5,1,9,5,6,4,5,1,2024/07/02,4.5,IM,controversial person,tranquil,dishonest,28,3,0,1,0
+Spain,8,Oinatz Gartzearena,443732517,No,Unpredictable,No,Healthy,,No,33.085,85,3110,1260,19,10,3,13,6,5,0,9,8,8,3,1,2,2024/07/02,5.0,CD,pleasant guy,balanced,honest,24,1,0,0,0
+Sweden,10,Mikael Göransson,445380762,No,,No,Healthy,,No,33.067,67,3250,2688,32,6,5,16,8,5,1,4,11,4,6,2,1,2024/06/29,6.5,IM,sympathetic guy,calm,honest,18,3,1,0,0
+Puerto Rico,11,Andrés Millán,455400205,No,,No,Healthy,,No,33.026,26,2560,1860,19,8,4,13,5,5,1,7,10,6,5,2,5,2024/07/02,5.0,IM,nasty fellow,fiery,honest,30,1,0,1,0
+Finland,12,Aarni Paattakainen,448370610,No,Unpredictable,No,Healthy,,No,31.09,90,35450,20880,4,8,2,6,4,6,1,9,15,7,6,2,1,2024/07/02,5.5,IM,controversial person,balanced,infamous,21,0,0,0,0
+Netherlands,13,Alessandro van der Rijst,445480640,No,,No,Healthy,,No,32.083,83,3340,2148,19,8,3,13,6,5,1,4,10,6,6,1,2,2024/06/29,4.5,IM,pleasant guy,calm,honest,36,4,0,2,1
+Netherlands,14,Jacobus Schoppert,446838997,No,,No,Healthy,,No,34.046,46,1250,2220,31,8,5,16,8,4,0,3,11,6,3,3,2,2024/07/02,4.5,LW,nasty fellow,tranquil,honest,39,4,1,1,0
+France,15,Sylvain Delanoé,451196908,No,Powerful,No,Healthy,,No,33.003,3,4210,1610,19,8,3,13,6,6,1,8,10,2,8,5,8,2024/06/29,5.0,IM,sympathetic guy,temperamental,honest,55,4,2,0,2
+Argentina,16,Fernando Fabián Bouille,447584788,No,,No,Healthy,,No,33.103,103,4030,1440,19,7,4,12,7,5,0,5,5,7,10,7,9,2024/07/02,4.5,RW,controversial person,temperamental,honest,35,3,1,1,0
+Belgium,17,Barthélemy Petitpierre,443900223,No,,No,Healthy,,No,34.035,35,1250,1068,19,10,5,13,8,5,1,6,10,6,3,7,8,2024/06/29,4.5,LW,controversial person,temperamental,dishonest,65,3,4,1,1
+Netherlands,18,Eldon van der Weerd,454594525,No,Quick,No,Healthy,,No,31.039,39,2560,744,19,2,5,12,4,6,1,2,6,8,8,4,7,2024/06/29,3.5,RW,controversial person,balanced,honest,3,3,0,1,2
+Germany,19,Domenik Bach-Paraski,438122306,No,Head,No,Healthy,,No,36.001,1,1610,936,57,6,6,20,4,4,0,3,10,3,11,2,5,2024/07/02,4.0,IM,pleasant guy,tranquil,upright,27,5,1,0,0
+France,20,Massimo Maschi,474360269,No,Head,Yes,Healthy,,No,23.003,3,37540,9890,75,4,5,20,6,7,1,6,6,6,5,13,6,2024/06/29,8.0,FW,sympathetic guy,calm,honest,45,45,4,1,3
+France,21,Yvonnick Goblet,474596242,No,,Yes,Healthy,,No,22.013,13,27690,5690,72,4,1,20,8,7,1,5,7,5,4,12,6,2024/07/02,8.0,FW,pleasant guy,temperamental,honest,34,34,0,5,0
+France,22,Baptiste Faroux,474677743,No,,Yes,Healthy,,No,22.027,27,16410,3710,71,4,4,20,6,7,1,5,6,7,3,11,7,2024/07/02,7.0,FW,controversial person,balanced,dishonest,9,9,0,1,3
+Italy,24,Gennaro Menin,469824249,No,Powerful,No,Healthy,,No,25.096,96,29720,11784,109,4,3,20,6,6,1,5,5,4,6,13,4,2024/06/29,7.0,FW,sympathetic guy,balanced,honest,37,37,2,0,1
+Sweden,32,Rasmus Danielsson,442673594,No,,No,Healthy,,No,36.016,16,440,432,74,6,3,20,7,4,0,7,8,5,4,3,4,2024/06/15,3.5,IM,pleasant guy,balanced,upright,23,10,0,1,0
+Belarus,34,Aleh Mankevich,436417650,No,,No,Healthy,,No,37.1,100,40,336,74,8,6,20,6,3,0,3,7,4,2,3,9,2024/07/02,3.5,IM,pleasant guy,calm,honest,51,10,2,3,0
+Hungary,35,Balázs Vincze,433888169,No,Unpredictable,No,Healthy,,No,38.04,40,170,360,57,14,3,20,6,2,0,5,8,7,0,0,5,2024/06/01,4.5,RW,sympathetic guy,balanced,honest,109,6,3,0,0
+Switzerland,36,Salomon Reichelmeier,467730747,No,Head,No,Healthy,,No,34.105,105,360,828,31,8,3,16,5,4,1,9,5,5,3,1,3,2024/03/20,3.5,RB,popular guy,calm,infamous,20,1,0,0,0
+Oceania,37,Buster Armitage,434471607,No,Unpredictable,No,Healthy,,No,38.084,84,120,516,72,11,4,20,2,2,0,9,3,1,0,1,8,2024/06/05,3.5,RB,sympathetic guy,balanced,honest,46,11,1,0,0
+Turkey,38,Sedat Sağlam,438957810,No,Powerful,No,Healthy,,No,37.025,25,190,480,72,9,1,20,3,2,0,10,4,0,2,0,6,2024/03/20,5.0,CD,controversial person,tranquil,upright,13,1,0,0,0
+Argentina,39,Hernán Minoian,440234867,No,,No,Healthy,,No,36.107,107,260,468,91,7,7,20,8,3,0,8,3,3,6,3,4,2024/07/02,5.0,CD,pleasant guy,calm,upright,38,4,1,1,0
+France,50,Bob Provot,482079635,No,Quick,Yes,Healthy,,No,18.038,38,29730,6450,21,2,3,20,6,6,13,2,1,1,1,2,4,2024/07/02,5.0,GK,popular guy,fiery,honest,0,0,0,0,0
+France,51,Nicholas Levrel,479945199,No,,Yes,Healthy,,No,19.079,79,12430,4450,35,2,5,20,4,4,11,3,1,1,1,1,6,2024/05/01,4.0,GK,sympathetic guy,balanced,upright,0,0,0,0,0
